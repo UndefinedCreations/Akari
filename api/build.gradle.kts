@@ -3,9 +3,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.16-R0.1-SNAPSHOT")
     compileOnly(project(":common"))
-    compileOnly(project(":api"))
+    compileOnly(project(":v1_21_3"))
 }
 
 tasks {
