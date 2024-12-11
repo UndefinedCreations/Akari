@@ -1,5 +1,6 @@
 package com.undefined.akari.objects
 
 enum class CamaraAlgorithmType {
-    SMOOTH
+    SMOOTH,
+    SIMPLE
 }

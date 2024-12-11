@@ -17,6 +17,10 @@ interface CamaraDisplay {
 
     fun setViewers(players: List<Player>) = players.forEach { setViewer(it) }
 
+    fun removeViewers(players: List<Player>)
+
+    fun removeViewers(player: Player) = removeViewers(listOf(player))
+
     fun interpolationDuration(interpolatorDuration: Int)
 
 }

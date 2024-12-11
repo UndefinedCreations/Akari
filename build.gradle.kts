@@ -12,11 +12,25 @@ plugins {
 
 apply(plugin = "maven-publish")
 
-val versionVar = "0.0.1"
+val versionVar = "0.0.4"
 val groupIdVar = "com.undefined"
 
 group = "com.undefined"
 version = "0.0.1"
+
+
+publishing {
+    repositories {
+        maven {
+            name = "UndefinedCreation"
+            url = uri("https://repo.undefinedcreation.com/releases")
+            credentials(PasswordCredentials::class) {
+                username = System.getenv("MAVEN_NAME")
+                password = System.getenv("MAVEN_SECRET")
+            }
+        }
+    }
+}
 
 allprojects {
     apply(plugin = "java")
@@ -33,6 +47,18 @@ allprojects {
         maven {
             name = "sonatype"
             url = uri("https://oss.sonatype.org/content/groups/public/")
+        }
+    }
+
+    publishing {
+        publications {
+            register<MavenPublication>("maven") {
+                groupId = groupIdVar
+                artifactId = "akari"
+                version = versionVar
+
+                from(components["java"])
+            }
         }
     }
 

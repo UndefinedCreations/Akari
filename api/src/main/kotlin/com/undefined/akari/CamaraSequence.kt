@@ -3,6 +3,7 @@ package com.undefined.akari
 import com.undefined.akari.algorithms.CamaraAlgorithm
 import com.undefined.akari.exception.DifferentWorldException
 import com.undefined.akari.manager.DisplayManager
+import com.undefined.akari.objects.CamaraAlgorithmType
 import com.undefined.akari.objects.CamaraPoint
 import org.bukkit.Material
 import org.bukkit.entity.BlockDisplay
@@ -13,13 +14,14 @@ import org.joml.Vector3f
 import java.util.*
 
 class CamaraSequence(
-    private val javaPlugin: JavaPlugin
+    private val javaPlugin: JavaPlugin,
+    private val camaraAlgorithmType: CamaraAlgorithmType = CamaraAlgorithmType.SMOOTH
 ) {
 
     private var pointsMap: SortedMap<Int, CamaraPoint> = sortedMapOf()
 
     fun addPoint(point: CamaraPoint): CamaraSequence {
-        pointsMap.values.random().world?.let {
+        pointsMap.values.randomOrNull()?.world?.let {
             if (point.world != it) throw DifferentWorldException(it, point.world!!)
         }
 
@@ -31,6 +33,10 @@ class CamaraSequence(
             pointsMap[0] = point
         }
 
+        pointsMap.lastEntry().run {
+            for (x in 0..value.delay) pointsMap[key + x] = point
+        }
+
         return this
     }
 
@@ -39,30 +45,7 @@ class CamaraSequence(
         //Moving all points down if needed
         pointsMap = moveFirstPointToFirstPlace()
 
-        val generatedPathMap: SortedMap<Int, CamaraPoint> = sortedMapOf()
-        
-        var previousMainPoint: Pair<Int, CamaraPoint>? = null
-        
-        pointsMap.forEach { 
-
-            //Checks its not the first point
-            previousMainPoint?.let { previous ->
-                generatedPathMap.putAll(//Generate Path from algorithm
-                    CamaraAlgorithm.generate(
-                        previous.first + previous.second.delay, previous.second, it.value
-                    )
-                )
-            }
-
-            //Add the main place
-            for (x in 0..it.value.delay) {
-                generatedPathMap[it.key + x] = it.value
-            }
-
-            previousMainPoint = Pair(it.key, it.value)
-        }
-
-        return generatedPathMap
+        return CamaraAlgorithm.generate(camaraAlgorithmType, pointsMap)
     }
 
     private fun moveFirstPointToFirstPlace(): SortedMap<Int, CamaraPoint> {
@@ -77,15 +60,15 @@ class CamaraSequence(
     fun play(players: List<Player>) {
 
         val path = generatePath()
-
-        path.forEach {
-
-            val dis = it.value.world?.spawn(it.value, BlockDisplay::class.java)!!
-            dis.block = Material.GREEN_CONCRETE.createBlockData()
-
-           dis.displayWidth = 0.5f
-            dis.displayHeight = 0.5f
-        }
+//
+//        path.forEach {
+//
+//            val dis = it.value.world?.spawn(it.value, BlockDisplay::class.java)!!
+//            dis.block = Material.GREEN_CONCRETE.createBlockData()
+//
+//           dis.displayWidth = 0.1f
+//            dis.displayHeight = 0.1f
+//        }
 
         val display = DisplayManager.create()
 
@@ -99,6 +82,8 @@ class CamaraSequence(
             override fun run() {
                 if (!path.containsKey(tick)) {
                     cancel()
+                    display.removeViewers(players)
+                    display.remove()
                     return
                 }
                 display.interpolationDuration(1)

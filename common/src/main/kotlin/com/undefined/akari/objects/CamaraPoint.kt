@@ -13,7 +13,6 @@ class CamaraPoint(
     pitch: Float = 0f,
     val delay: Int = 0,
     val durationIntoPoint: Int = 40,
-    val camaraType: CamaraAlgorithmType = CamaraAlgorithmType.SMOOTH
 ): Location(world, x, y, z, yaw, pitch) {
 
     init {

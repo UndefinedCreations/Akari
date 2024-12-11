@@ -74,6 +74,12 @@ class CamaraDisplay: CamaraDisplay {
         players.sendPacket(ClientboundSetCameraPacket(entity!!))
     }
 
+    override fun removeViewers(players: List<Player>) {
+        players.forEach {
+            it.sendPacket(ClientboundSetCameraPacket((it as CraftPlayer).handle))
+        }
+    }
+
     override fun interpolationDuration(interpolatorDuration: Int) {
         if (entity == null) return
 
@@ -97,11 +103,15 @@ class CamaraDisplay: CamaraDisplay {
 
     private fun Collection<Player>.sendPacket(vararg packet: Packet<*>) = forEach { it.sendPacketArray(packet) }
 
-    private fun Player.sendPacketArray(packet: Array<out Packet<*>>) = packet.forEach {
+    private fun Player.sendPacket(packet: Packet<*>) {
         val craftPlayer = this as CraftPlayer
         val serverPlayer = craftPlayer.handle
         val connection = serverPlayer.connection
-        connection.sendPacket(it)
+        connection.sendPacket(packet)
+    }
+
+    private fun Player.sendPacketArray(packet: Array<out Packet<*>>) = packet.forEach {
+        this.sendPacket(it)
     }
 
 }

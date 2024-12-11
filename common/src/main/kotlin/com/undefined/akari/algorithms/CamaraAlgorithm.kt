@@ -7,11 +7,11 @@ import java.util.SortedMap
 object CamaraAlgorithm {
 
     fun generate(
-        startTick: Int,
-        startPoint: CamaraPoint,
-        endPoint: CamaraPoint
-    ): SortedMap<Int, CamaraPoint> = when(endPoint.camaraType) {
-        CamaraAlgorithmType.SMOOTH -> SmoothAlgorithm.generate(startTick, startPoint, endPoint)
+        camaraAlgorithmType: CamaraAlgorithmType,
+        map: SortedMap<Int, CamaraPoint>
+    ): SortedMap<Int, CamaraPoint> = when(camaraAlgorithmType) {
+        CamaraAlgorithmType.SMOOTH -> SmoothAlgorithm.generate(map)
+        CamaraAlgorithmType.SIMPLE -> SimpleAlgorithm.generate(map)
     }
 
 }
