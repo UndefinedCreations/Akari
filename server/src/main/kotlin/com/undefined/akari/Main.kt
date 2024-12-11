@@ -14,15 +14,10 @@ class Main: JavaPlugin() {
         StellarCommand("testing")
             .addExecution<Player> {
 
-                val c = DisplayManager.create()
+                CamaraSequence(this@Main)
+                    .addPoint(sender.location.clone().add(0.0, 10.0, 5.0).camaraPoint())
+                    .play(sender)
 
-                c.spawn(source.eyeLocation.camaraPoint(), source)
-
-                source.gameMode = GameMode.SPECTATOR
-                c.interpolationDuration(20)
-                c.setViewer(source)
-
-                c.teleport(source.eyeLocation.add(0.0, 5.0, 0.0).camaraPoint())
 
             }.register(this)
 
