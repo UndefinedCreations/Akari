@@ -50,9 +50,10 @@ object SimpleAlgorithm {
         val yAmount = yDifference / newPoint.durationIntoPoint
         val zAmount = zDifference / newPoint.durationIntoPoint
 
-        val yawAmount = yawDifference / newPoint.durationIntoPoint
+        var yawAmount = yawDifference / newPoint.durationIntoPoint
         var pitchAmount = pitchDifference / newPoint.durationIntoPoint
 
+        if (yawAmount < 0) yawAmount *= -1
         if (pitchAmount < 0) pitchAmount *= -1
 
         val map = sortedMapOf<Int, CamaraPoint>()

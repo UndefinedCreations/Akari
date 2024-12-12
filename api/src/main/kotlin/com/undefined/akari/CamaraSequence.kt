@@ -51,15 +51,15 @@ class CamaraSequence(
     fun play(players: List<Player>) {
 
         val path = generatePath()
-//
-//        path.forEach {
-//
-//            val dis = it.value.world?.spawn(it.value, BlockDisplay::class.java)!!
-//            dis.block = Material.GREEN_CONCRETE.createBlockData()
-//
-//           dis.displayWidth = 0.1f
-//            dis.displayHeight = 0.1f
-//        }
+
+        path.forEach {
+
+            val dis = it.value.world?.spawn(it.value, BlockDisplay::class.java)!!
+            dis.block = Material.GREEN_CONCRETE.createBlockData()
+
+           dis.displayWidth = 0.1f
+            dis.displayHeight = 0.1f
+        }
 
         val display = DisplayManager.create()
 
