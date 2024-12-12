@@ -11,8 +11,8 @@ class CamaraPoint(
     z: Double,
     yaw: Float = 0f,
     pitch: Float = 0f,
-    val delay: Int = 0,
-    val durationIntoPoint: Int = 40,
+    var delay: Int = 0,
+    var durationIntoPoint: Int = 40,
 ): Location(world, x, y, z, yaw, pitch) {
 
     init {

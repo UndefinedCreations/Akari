@@ -28,34 +28,25 @@ class CamaraSequence(
         val lastEntry = pointsMap.lastEntry()
         if (lastEntry != null) {
             val stillTick = lastEntry.key + lastEntry.value.delay + point.durationIntoPoint
+            println("NExt point at $stillTick")
             pointsMap[stillTick] = point
         } else {
+            println("STart At 0")
             pointsMap[0] = point
         }
 
         pointsMap.lastEntry().run {
-            for (x in 0..value.delay) pointsMap[key + x] = point
+            for (x in 0..value.delay) {
+                println(key + x)
+                pointsMap[key + x] = point
+            }
         }
 
         return this
     }
 
 
-    private fun generatePath(): SortedMap<Int, CamaraPoint> {
-        //Moving all points down if needed
-        pointsMap = moveFirstPointToFirstPlace()
-
-        return CamaraAlgorithm.generate(camaraAlgorithmType, pointsMap)
-    }
-
-    private fun moveFirstPointToFirstPlace(): SortedMap<Int, CamaraPoint> {
-        if (pointsMap.firstKey() == 0) return pointsMap
-
-        val firstTick = pointsMap.firstKey()
-        val newMap: SortedMap<Int, CamaraPoint> = sortedMapOf()
-        pointsMap.forEach { newMap[it.key - firstTick] = it.value }
-        return newMap
-    }
+    private fun generatePath(): SortedMap<Int, CamaraPoint> = CamaraAlgorithm.generate(camaraAlgorithmType, pointsMap)
 
     fun play(players: List<Player>) {
 
@@ -81,6 +72,7 @@ class CamaraSequence(
 
             override fun run() {
                 if (!path.containsKey(tick)) {
+                    println(tick)
                     cancel()
                     display.removeViewers(players)
                     display.remove()

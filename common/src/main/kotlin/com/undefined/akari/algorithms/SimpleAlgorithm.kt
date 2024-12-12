@@ -16,7 +16,7 @@ object SimpleAlgorithm {
         map.forEach {
             if (oldPoint != null) {
                 if (oldPoint!!.key +1 != it.key) {
-                    newMap.putAll(generatePath(oldPoint!!.key, oldPoint!!.value, it.value))
+                    newMap.putAll(generatePath(oldPoint!!.key + oldPoint!!.value.delay, oldPoint!!.value, it.value))
                 }
             }
 
@@ -28,7 +28,6 @@ object SimpleAlgorithm {
 
         newMap.putAll(map)
 
-        println(newMap)
         return newMap
     }
 
@@ -43,15 +42,18 @@ object SimpleAlgorithm {
         val pitchDifference = (newPoint.pitch + 90) - (oldPoint.pitch + 90)
 
         val yawRotation = if (yawDifference > 0) CamaraRotations.RIGHT else CamaraRotations.LEFT
-        val pitchRotations = if (pitchDifference > 0) CamaraRotations.UP else CamaraRotations.DOWN
+        val pitchRotations = if (pitchDifference > 0) CamaraRotations.DOWN else CamaraRotations.UP
 
+        println("$yawRotation | $pitchRotations")
 
         val xAmount = xDifference / newPoint.durationIntoPoint
         val yAmount = yDifference / newPoint.durationIntoPoint
         val zAmount = zDifference / newPoint.durationIntoPoint
 
         val yawAmount = yawDifference / newPoint.durationIntoPoint
-        val pitchAmount = pitchDifference / newPoint.durationIntoPoint
+        var pitchAmount = pitchDifference / newPoint.durationIntoPoint
+
+        if (pitchAmount < 0) pitchAmount *= -1
 
         val map = sortedMapOf<Int, CamaraPoint>()
 

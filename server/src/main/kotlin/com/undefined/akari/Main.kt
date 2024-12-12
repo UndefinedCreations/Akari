@@ -18,15 +18,15 @@ class Main: JavaPlugin() {
             .addExecution<Player> {
 
                 CamaraSequence(this@Main, CamaraAlgorithmType.SIMPLE)
-                    .addPoint(source.eyeLocation.clone().add(0.0, 30.0, 0.0).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .play(source)
+                    .addPoint(sender.eyeLocation.clone().add(0.0, 30.0, 0.0).camaraPoint().apply { delay = 20 })
+                    .addPoint(randomLoc(sender.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
+                    .addPoint(randomLoc(sender.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
+                    .addPoint(randomLoc(sender.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
+                    .addPoint(randomLoc(sender.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
+                    .addPoint(randomLoc(sender.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
+                    .addPoint(randomLoc(sender.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
+                    .addPoint(randomLoc(sender.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
+                    .play(sender)
 
 
             }.register(this)
