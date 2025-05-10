@@ -1,46 +1,54 @@
 package com.undefined.akari
 
-import com.undefined.akari.manager.DisplayManager
-import com.undefined.akari.objects.CamaraAlgorithmType
-import com.undefined.akari.objects.camaraPoint
-import com.undefined.stellar.StellarCommand
-import org.bukkit.GameMode
+import com.undefined.akari.algorithm.lerp.LerpAlgorithm
+import com.undefined.akari.algorithm.lerp.ShapingFunction
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import kotlin.random.Random
 
-class Main: JavaPlugin() {
+class Main : JavaPlugin() {
 
     override fun onEnable() {
 
-        StellarCommand("testing")
-            .addExecution<Player> {
-
-                CamaraSequence(this@Main, CamaraAlgorithmType.SMOOTH)
-                    .addPoint(source.eyeLocation.clone().add(0.0, 30.0, 0.0).camaraPoint().apply { delay = 20 })
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .addPoint(randomLoc(source.eyeLocation.add(0.0, 30.0, 0.0)).camaraPoint())
-                    .play(source)
+        AkariConfig()
+            .setPlugin(this)
 
 
-            }.register(this)
+        CamaraPath()
+            .setAlg(LerpAlgorithm(ShapingFunction.PARAMETRIC_BLEND))
+            .addLocation()
+            .addCamaraPath(CamaraPath())
+            .add
+            .addLocation()
+            .addLocation()
+
+
+    }
+}
+
+class CamaraPath() {
+
+    val points: HashMap<Int, Location> = hashMapOf()
+
+    fun addLocation(location: Location, time: Int = 20): CamaraPath {
+        val highestPoint = points.keys.maxOf { it }
+        points[highestPoint+time] = location
+        return this
+    }
+
+    fun addCamaraPath(camaraPath: CamaraPath) {}
+
+
+    fun play(playerList: List<Player>) {
 
     }
 
-
-    fun randomLoc(loc: Location) = loc.clone().add(Random.nextDouble(-25.0, 25.0), Random.nextDouble(-25.0, 25.0), Random.nextDouble(-25.0, 25.0)).apply {
-        yaw = Random.nextDouble(-175.0, 175.0).toFloat()
-        pitch = Random.nextDouble(-85.0, 85.0).toFloat()
+    fun play(vararg players: Player) {
+        play(players.toList())
     }
 
-    override fun onDisable() {
-
-    }
+    fun play(player: Player) = play(listOf(player))
 
 }
+
+

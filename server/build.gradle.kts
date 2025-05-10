@@ -1,34 +1,43 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    kotlin("jvm") version "1.9.22"
-    id("xyz.jpenilla.run-paper") version "2.2.2"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    setup
+    id("com.undefinedcreations.nova") version "0.0.5"
+    id("com.gradleup.shadow")
 }
 
 repositories {
-    maven("https://repo.undefinedcreation.com/stellar")
+    maven {
+        name = "undefined-repo"
+        url = uri("https://repo.undefinedcreations.com/releases")
+    }
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.21.3-R0.1-SNAPSHOT")
+    compileOnly(libs.spigot)
+
+    implementation("com.undefined:stellar:1.0.0")
+
     implementation(project(":common"))
-    implementation(project(":v1_21_3:", "reobf"))
     implementation(project(":api"))
-    implementation("com.undefined:stellar:0.0.1:mapped")
+    implementation(project(":nms:v1_21_5"))
+
+    implementation("net.kyori:adventure-api:4.17.0")
+    implementation("net.kyori:adventure-text-minimessage:4.17.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+
 }
 
 tasks {
-    assemble {
-        dependsOn(shadowJar)
-    }
-
-
     compileKotlin {
-        kotlinOptions.jvmTarget = "21"
+        compilerOptions.jvmTarget = JvmTarget.JVM_21
     }
-
+    compileJava {
+        options.release = 21
+    }
     runServer {
-        minecraftVersion("1.21.3")
-        jvmArgs("-Xmx2G")
+        minecraftVersion("1.21.5")
+        acceptMojangEula()
     }
 }
 
