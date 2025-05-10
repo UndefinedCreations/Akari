@@ -12,7 +12,7 @@ interface NMS {
 
     fun createServerEntity(entity: Any, world: World): Any?
 
-    fun sendSpawnPackets(entity: Any, serverEntity: Any, players: List<Player>)
+    fun sendSpawnPacket(entity: Any, serverEntity: Any?, players: List<Player>)
 
     fun sendRemoveEntityPacket(entity: Any, players: List<Player>)
 
@@ -21,4 +21,7 @@ interface NMS {
     fun sendRemoveCameraPacket(players: List<Player>)
 
     fun setInterpolationDuration(entity: Any, interpolationDuration: Int, players: List<Player>)
+
+    fun sendTeleportPacket(entity: Any, players: List<Player>)
+
 }
