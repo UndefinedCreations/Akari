@@ -23,14 +23,12 @@ object TestCommand {
                     .addCameraPath(
                         CameraPath()
                             .setAlgorithm(AlgorithmType.LERP)
-                            .addCamaraPoint(CameraPoint(Vector(0.0, 0.0, 0.0), 0f, 0f))
-                            .addCamaraPoint(CameraPoint(Vector(0.0, 30.0, 0.0), 0f, 0f))
-                            .addCamaraPoint(CameraPoint(Vector(0.0, 70.0, 0.0), 0f, 0f))
+                            .addCamaraPoint(CameraPoint(Vector(0.0, 0.0, 0.0), 0f, 0f), 20)
+                            .addCamaraPoint(CameraPoint(Vector(0.0, 30.0, 0.0), 0f, 0f), 60)
+                            .addCamaraPoint(CameraPoint(Vector(0.0, 70.0, 0.0), 50f, 30f), 60)
                             .calculatePoints()
                     )
                     .play(player)
-
-
 
                 player.sendMessage("Camera path calculated.")
            }

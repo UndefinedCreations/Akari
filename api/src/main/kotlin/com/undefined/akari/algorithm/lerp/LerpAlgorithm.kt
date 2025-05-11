@@ -4,6 +4,7 @@ package com.undefined.akari.algorithm.lerp
 
 import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.algorithm.lerp.LerpAlgorithm.MathUtils.lerp
+import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPoint
 import org.bukkit.util.Vector
 
@@ -27,7 +28,7 @@ class LerpAlgorithm: Algorithm {
 
     }
 
-    override fun calculatePoints(pointMap: HashMap<Int, CameraPoint>): HashMap<Int, CameraPoint> {
+    override fun calculatePoints(pointMap: HashMap<Int, CameraPoint>): CalculatedPath {
 
         val sortedTicks = pointMap.keys.sorted()
         var currentTick = sortedTicks.first()
@@ -48,7 +49,7 @@ class LerpAlgorithm: Algorithm {
                 currentTick++
             }
         }
-        return calculated
+        return CalculatedPath(calculated)
     }
 
     fun deCasteljau (points: MutableList<Float> = mutableListOf(1f,4f,6f,9f), f: Float): Float {

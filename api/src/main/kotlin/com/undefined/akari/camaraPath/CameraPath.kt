@@ -25,7 +25,7 @@ class CameraPath {
         return this
     }
 
-    fun calculatePoints(): CalculatedPath = CalculatedPath(algorithm.calculatePoints(pointMap))
+    fun calculatePoints(): CalculatedPath = algorithm.calculatePoints(pointMap)
 
     fun addLocationPoint(location: Location, time: Int = 20): CameraPath = addCamaraPoint(location.toCamaraPoint(), time)
 
