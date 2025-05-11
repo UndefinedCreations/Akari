@@ -6,11 +6,28 @@ import org.bukkit.util.Vector
 
 data class CameraPoint(
     val position: Vector,
-    val yaw: Float,
-    val pitch: Float,
+    var yaw: Float,
+    var pitch: Float,
 ) {
 
     fun toLocation(world: World): Location = Location(world, position.x, position.y, position.z, yaw, pitch)
+
+    fun setYaw(amount: Float) = apply {
+        this.yaw = amount
+    }
+    fun setPitch(amount: Float) = apply {
+        this.pitch = amount
+    }
+
+    fun addYaw(amount: Float) = apply {
+        this.yaw += amount
+    }
+    fun addPitch(amount: Float) = apply {
+        this.pitch += amount
+    }
+    fun addPosition(vector: Vector) = apply {
+        this.position.add(vector)
+    }
 
 }
 

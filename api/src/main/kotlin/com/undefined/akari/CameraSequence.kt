@@ -6,6 +6,7 @@ import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.algorithm.lerp.LerpAlgorithm
 import com.undefined.akari.camaraPath.CalculatedPath
+import com.undefined.akari.camaraPath.CameraPath
 import com.undefined.akari.camaraPath.CameraPoint
 import com.undefined.akari.entity.BukkitCamera
 import com.undefined.akari.entity.Camera
@@ -32,7 +33,7 @@ class CameraSequence(
     /**
      * Sets smoothing algorithm for merging paths and return the modified [CameraSequence].
      */
-    fun setAlgorithm(algorithmType: AlgorithmType): CameraSequence = apply {
+    fun setBridge(algorithmType: AlgorithmType): CameraSequence = apply {
         this.algorithm = algorithmType.klass.constructors.first().call()
     }
 
