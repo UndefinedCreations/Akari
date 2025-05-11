@@ -1,7 +1,6 @@
-package com.undefined.akari.algorithm.lerp
+package com.undefined.akari.algorithm.smoothstep
 
-import com.undefined.akari.algorithm.lerp.LerpAlgorithm.MathUtils.lerp
-import com.undefined.akari.camaraPath.CameraPoint
+import com.undefined.akari.algorithm.smoothstep.SmoothStepAlgorithm.MathUtils.lerp
 
 enum class ShapingFunction {
 

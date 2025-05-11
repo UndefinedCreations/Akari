@@ -1,8 +1,9 @@
 package com.undefined.akari.algorithm
 
-import com.undefined.akari.algorithm.lerp.LerpAlgorithm
-import kotlin.reflect.KClass
+import com.undefined.akari.algorithm.catmull.CatmullRomAlgorithm
+import com.undefined.akari.algorithm.smoothstep.SmoothStepAlgorithm
 
-enum class AlgorithmType(val klass: KClass<out Algorithm>) {
-    LERP(LerpAlgorithm::class)
+enum class AlgorithmType(val klass: Algorithm) {
+    SMOOTHSTEP(SmoothStepAlgorithm),
+    CATMULLROM(CatmullRomAlgorithm),
 }

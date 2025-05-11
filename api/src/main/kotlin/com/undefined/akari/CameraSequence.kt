@@ -4,7 +4,6 @@ package com.undefined.akari
 
 import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.algorithm.AlgorithmType
-import com.undefined.akari.algorithm.lerp.LerpAlgorithm
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPoint
 import com.undefined.akari.entity.BukkitCamera
@@ -21,7 +20,7 @@ class CameraSequence(
 ) {
 
     private val pathMap: MutableList<CalculatedPath> = mutableListOf()
-    private var algorithm: Algorithm = LerpAlgorithm()
+    private var algorithm: Algorithm = AlgorithmType.SMOOTHSTEP.klass
 
     private var camera: Camera = NMSCamera
 
@@ -35,7 +34,7 @@ class CameraSequence(
      * Sets smoothing algorithm for merging paths and return the modified [CameraSequence].
      */
     fun setBridge(algorithmType: AlgorithmType): CameraSequence = apply {
-        this.algorithm = algorithmType.klass.constructors.first().call()
+        this.algorithm = AlgorithmType.SMOOTHSTEP.klass
     }
 
     /**
@@ -61,7 +60,7 @@ class CameraSequence(
     }
 
     private fun addToMap(firstMap: HashMap<Int, CameraPoint>, secondMap: HashMap<Int, CameraPoint>): HashMap<Int, CameraPoint> {
-        var maxOfFirst = firstMap.keys.maxBy { it }
+        var maxOfFirst = if (firstMap.isEmpty()) -1 else firstMap.keys.maxBy { it }
         for (entry in secondMap) {
             maxOfFirst++
             firstMap[maxOfFirst] = entry.value

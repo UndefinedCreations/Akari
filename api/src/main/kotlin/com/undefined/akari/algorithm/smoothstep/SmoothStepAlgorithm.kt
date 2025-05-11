@@ -1,13 +1,13 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.undefined.akari.algorithm.lerp
+package com.undefined.akari.algorithm.smoothstep
 
 import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPoint
 import org.bukkit.util.Vector
 
-class LerpAlgorithm : Algorithm {
+object SmoothStepAlgorithm : Algorithm {
 
     object MathUtils {
         fun lerp(a: Float, b: Float, f: Float): Float {
