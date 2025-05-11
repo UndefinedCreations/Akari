@@ -8,14 +8,9 @@ import com.undefined.akari.algorithm.lerp.LerpAlgorithm
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPoint
 import com.undefined.akari.manager.NMSManager
-import com.undefined.lynx.scheduler.repeatingTask
-import com.undefined.lynx.logger.sendWarn
-import com.undefined.akari.nms.NMS
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
-import org.checkerframework.checker.units.qual.C
-import kotlin.concurrent.timerTask
 
 class CameraSequence(
     private val world: World
@@ -68,20 +63,29 @@ class CameraSequence(
         NMSManager.nms.setInterpolationDuration(entity, 1, players)
         NMSManager.nms.sendSetCameraPacket(entity, players)
 
-        var index = 0
 
-        repeatingTask(1, pathMap.values.size, false) {
-            val point: CameraPoint? = getFullPath()[index]
-            if (point == null) {
-                NMSManager.nms.sendRemoveEntityPacket(entity, players)
-                sendWarn("Camera path is ended or abrupted.")
-                return@repeatingTask
+
+        object : BukkitRunnable() {
+            var index = 0
+            val fullPath = getFullPath()
+            override fun run() {
+                if (index >= pathMap.values.size) {
+                    cancel()
+                    return
+                }
+                val point: CameraPoint? = fullPath[index]
+                if (point == null) {
+                    NMSManager.nms.sendRemoveEntityPacket(entity, players)
+                    throw RuntimeException("Next point not found.")
+                }
+                NMSManager.nms.setEntityLocation(entity, point.toLocation(world))
+                NMSManager.nms.sendTeleportPacket(entity, players)
+                players.forEach { it.sendMessage("Moved $index") }
+                index++
             }
-            NMSManager.nms.setEntityLocation(entity, point.toLocation(world))
-            NMSManager.nms.sendTeleportPacket(entity, players)
-            players.forEach { it.sendMessage("Moved $index") }
-            index++
-        }
+
+        }.runTaskTimer(AkariConfig.javaPlugin, 1, 1)
+
 
     }
 

@@ -15,7 +15,7 @@ import org.bukkit.util.Vector
 class Main : JavaPlugin() {
 
     override fun onEnable() {
-        AkariConfig()
+        AkariConfig
             .setPlugin(this)
         LynxConfig
             .setPlugin(this)
