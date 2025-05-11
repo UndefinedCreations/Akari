@@ -15,6 +15,10 @@ repositories {
         name = "spigot-repo"
         url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
     }
+    maven {
+        name = "undefined-repo"
+        url = uri("https://repo.undefinedcreations.com/releases")
+    }
 }
 
 dependencies {

@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    setup
+    id("setup")
     id("com.undefinedcreations.nova") version "0.0.5"
     id("com.gradleup.shadow")
 }

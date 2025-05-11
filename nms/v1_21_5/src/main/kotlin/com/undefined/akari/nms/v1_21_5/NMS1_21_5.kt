@@ -30,7 +30,7 @@ object NMS_1_21_5 : NMS {
         const val SET_ROTATION = "b"
     }
 
-    override fun sendCreateEntity(world: World): Any =
+    override fun createItemDisplay(world: World): Any =
         Display.ItemDisplay(EntityType.ITEM_DISPLAY, (world as CraftWorld).handle)
 
     override fun setEntityLocation(entity: Any, location: Location) {
@@ -42,7 +42,7 @@ object NMS_1_21_5 : NMS {
         }(entity, location.yaw, location.pitch)
     }
 
-    override fun createServerEntity(entity: Any, world: World): Any? =
+    override fun createServerEntity(entity: Any, world: World): Any =
         ServerEntity(
             (world as CraftWorld).handle,
             entity as Display.ItemDisplay,

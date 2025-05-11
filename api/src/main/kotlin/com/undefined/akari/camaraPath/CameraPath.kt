@@ -1,3 +1,5 @@
+@file:Suppress("NO_REFLECTION_IN_CLASS_PATH")
+
 package com.undefined.akari.camaraPath
 
 import com.undefined.akari.algorithm.Algorithm
@@ -7,15 +9,10 @@ import org.bukkit.Location
 import org.bukkit.World
 import kotlin.reflect.KClass
 
-class CameraPath(
-    var world: World? = null
-) {
+class CameraPath {
 
     private val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
     private var algorithm: Algorithm = LerpAlgorithm()
-
-    internal var calculatedPoints: HashMap<Int, CameraPoint> = hashMapOf()
-
 
     fun setAlgorithm(algorithmType: AlgorithmType): CameraPath {
         this.algorithm = algorithmType.klass.constructors.first().call()
@@ -27,16 +24,9 @@ class CameraPath(
         pointMap[highestPoint+time] = cameraPoint
         return this
     }
-    fun calculatePoints(): CameraPath {
-        calculatedPoints = algorithm.calculatePoints(pointMap)
-        return this
-    }
+
+    fun calculatePoints(): CalculatedPath = CalculatedPath(algorithm.calculatePoints(pointMap))
 
     fun addLocationPoint(location: Location, time: Int = 20): CameraPath = addCamaraPoint(location.toCamaraPoint(), time)
-
-    fun addCamaraPath(cameraPath: CameraPath): CameraPath {
-
-        return this
-    }
 
 }

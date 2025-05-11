@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.undefined.akari.algorithm.lerp
 
 import com.undefined.akari.algorithm.Algorithm
@@ -6,10 +8,6 @@ import com.undefined.akari.camaraPath.CameraPoint
 import org.bukkit.util.Vector
 
 class LerpAlgorithm: Algorithm {
-
-    constructor() {
-
-    }
 
     object MathUtils {
         fun lerp(a: Float, b: Float, f: Float): Float {
@@ -29,20 +27,11 @@ class LerpAlgorithm: Algorithm {
 
     }
 
-    fun smoothPoints (a: CameraPoint, b: CameraPoint, t: Float): List<CameraPoint> {
-        val points: MutableList<CameraPoint> = mutableListOf()
-        for (i in 0 until 20) {
-            points.add(lerp(a,b,t))
-        }
-        return points.toList()
-    }
-
-
     override fun calculatePoints(pointMap: HashMap<Int, CameraPoint>): HashMap<Int, CameraPoint> {
 
         val sortedTicks = pointMap.keys.sorted()
         var currentTick = sortedTicks.first()
-        val points: HashMap<Int, CameraPoint> = hashMapOf()
+        val calculated: HashMap<Int, CameraPoint> = hashMapOf()
 
         for (i in 0 until sortedTicks.size - 1) {
             val aTick = sortedTicks[i]
@@ -53,17 +42,16 @@ class LerpAlgorithm: Algorithm {
             while (currentTick < bTick) {
                 val t = (currentTick - aTick).toFloat() / (bTick - aTick)
                 val interpolatedPoint = lerp(a, b, t)
-                points.put(t.toInt(), interpolatedPoint)
-                // Use interpolatedPoint however you want — e.g. apply camera position
+                calculated.put(t.toInt(), interpolatedPoint)  // Add to calculated
                 println("Tick: $currentTick -> $interpolatedPoint")
 
                 currentTick++
             }
         }
-        return points
+        return calculated
     }
 
-    fun fuc (points: MutableList<Float> = mutableListOf(1f,4f,6f,9f), f: Float): Float {
+    fun deCasteljau (points: MutableList<Float> = mutableListOf(1f,4f,6f,9f), f: Float): Float {
 
         // Go through every point.
         // Select the first point

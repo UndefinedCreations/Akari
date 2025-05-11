@@ -5,8 +5,7 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 
 interface NMS {
-
-    fun sendCreateEntity(world: World): Any
+    fun createItemDisplay(world: World): Any
 
     fun setEntityLocation(entity: Any, location: Location)
 
@@ -23,5 +22,4 @@ interface NMS {
     fun setInterpolationDuration(entity: Any, interpolationDuration: Int, players: List<Player>)
 
     fun sendTeleportPacket(entity: Any, players: List<Player>)
-
 }

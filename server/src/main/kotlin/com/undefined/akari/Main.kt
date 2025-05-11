@@ -15,7 +15,6 @@ import org.bukkit.util.Vector
 class Main : JavaPlugin() {
 
     override fun onEnable() {
-
         AkariConfig()
             .setPlugin(this)
         LynxConfig
@@ -23,8 +22,7 @@ class Main : JavaPlugin() {
         StellarConfig
             .setPlugin(this)
 
-        TestCommand().register()
-
+        TestCommand.register()
     }
 }
 
