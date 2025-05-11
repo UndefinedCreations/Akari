@@ -25,7 +25,7 @@ subprojects {
 }
 
 //val packageJavadoc by tasks.registering(Jar::class) {
-//    group = "lynx"
+//    group = "akari"
 //    archiveClassifier = "javadoc"
 //
 //    dependsOn(tasks.dokkaJavadocCollector)
@@ -33,7 +33,7 @@ subprojects {
 //}
 
 val packageSources by tasks.registering(Jar::class) {
-    group = "lynx"
+    group = "akari"
     archiveClassifier = "sources"
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(subprojects.filter { it.subprojects.isEmpty() }.map { it.sourceSets.main.get().allSource })
@@ -47,7 +47,7 @@ publishing {
             artifact(packageSources)
 
             pom {
-                name = "Lynx"
+                name = "Akari"
                 description = "A general purpose API for Java and Kotlin."
                 url = "https://www.github.com/UndefinedCreations/Lynx"
                 licenses {
@@ -82,16 +82,16 @@ publishing {
             }
         }
     }
-//    repositories {
-//        maven {
-//            name = "undefined-repo"
-//            url = uri("https://repo.undefinedcreations.com/releases")
-//            credentials(PasswordCredentials::class) {
-//                username = System.getenv("MAVEN_NAME") ?: property("mavenUser").toString()
-//                password = System.getenv("MAVEN_SECRET") ?: property("mavenPassword").toString()
-//            }
-//        }
-//    }
+    repositories {
+        maven {
+            name = "undefined-repo"
+            url = uri("https://repo.undefinedcreations.com/releases")
+            credentials(PasswordCredentials::class) {
+                username = System.getenv("MAVEN_NAME") ?: property("mavenUser").toString()
+                password = System.getenv("MAVEN_SECRET") ?: property("mavenPassword").toString()
+            }
+        }
+    }
 }
 
 java {
