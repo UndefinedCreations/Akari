@@ -1,27 +1,34 @@
 package com.undefined.akari.camaraPath
 
 import com.undefined.akari.algorithm.Algorithm
+import com.undefined.akari.algorithm.AlgorithmType
+import com.undefined.akari.algorithm.lerp.LerpAlgorithm
 import org.bukkit.Location
 import org.bukkit.World
+import kotlin.reflect.KClass
 
 class CameraPath(
     var world: World? = null
 ) {
 
     private val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
-    private var algorithm: Algorithm
+    private var algorithm: Algorithm = LerpAlgorithm()
 
     internal var calculatedPoints: HashMap<Int, CameraPoint> = hashMapOf()
 
 
-    fun setAlgorithm(algorithm: Algorithm): CameraPath {
-        this.algorithm = algorithm
+    fun setAlgorithm(algorithmType: AlgorithmType): CameraPath {
+        this.algorithm = algorithmType.klass.constructors.first().call()
         return this
     }
 
     fun addCamaraPoint(cameraPoint: CameraPoint, time: Int = 20): CameraPath {
         val highestPoint = if (pointMap.isEmpty()) 0 else pointMap.keys.maxOf { it }
         pointMap[highestPoint+time] = cameraPoint
+        return this
+    }
+    fun calculatePoints(): CameraPath {
+        calculatedPoints = algorithm.calculatePoints(pointMap)
         return this
     }
 

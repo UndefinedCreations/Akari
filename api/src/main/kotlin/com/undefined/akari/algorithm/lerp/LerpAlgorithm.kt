@@ -5,7 +5,11 @@ import com.undefined.akari.algorithm.lerp.LerpAlgorithm.MathUtils.lerp
 import com.undefined.akari.camaraPath.CameraPoint
 import org.bukkit.util.Vector
 
-class LerpAlgorithm (): Algorithm {
+class LerpAlgorithm: Algorithm {
+
+    constructor() {
+
+    }
 
     object MathUtils {
         fun lerp(a: Float, b: Float, f: Float): Float {
@@ -26,19 +30,37 @@ class LerpAlgorithm (): Algorithm {
     }
 
     fun smoothPoints (a: CameraPoint, b: CameraPoint, t: Float): List<CameraPoint> {
-        val points: List<CameraPoint> = listOf()
+        val points: MutableList<CameraPoint> = mutableListOf()
         for (i in 0 until 20) {
-            points.add(CameraPoint(lerp(a,b,t)))
+            points.add(lerp(a,b,t))
         }
+        return points.toList()
     }
 
 
     override fun calculatePoints(pointMap: HashMap<Int, CameraPoint>): HashMap<Int, CameraPoint> {
 
-        for (i in 0 until pointMap.keys.maxOf { it }) {
-            smoothPoints()
-        }
+        val sortedTicks = pointMap.keys.sorted()
+        var currentTick = sortedTicks.first()
+        val points: HashMap<Int, CameraPoint> = hashMapOf()
 
+        for (i in 0 until sortedTicks.size - 1) {
+            val aTick = sortedTicks[i]
+            val bTick = sortedTicks[i + 1]
+            val a = pointMap[aTick]!!
+            val b = pointMap[bTick]!!
+
+            while (currentTick < bTick) {
+                val t = (currentTick - aTick).toFloat() / (bTick - aTick)
+                val interpolatedPoint = lerp(a, b, t)
+                points.put(t.toInt(), interpolatedPoint)
+                // Use interpolatedPoint however you want — e.g. apply camera position
+                println("Tick: $currentTick -> $interpolatedPoint")
+
+                currentTick++
+            }
+        }
+        return points
     }
 
     fun fuc (points: MutableList<Float> = mutableListOf(1f,4f,6f,9f), f: Float): Float {

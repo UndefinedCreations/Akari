@@ -1,5 +1,6 @@
 package com.undefined.akari.algorithm.lerp
 
+import com.undefined.akari.algorithm.lerp.LerpAlgorithm.MathUtils.lerp
 import com.undefined.akari.camaraPath.CameraPoint
 
 enum class ShapingFunction {
