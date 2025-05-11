@@ -8,9 +8,12 @@ import com.undefined.akari.algorithm.lerp.LerpAlgorithm
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPoint
 import com.undefined.akari.manager.NMSManager
+import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.entity.BlockDisplay
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
+import org.joml.Vector3f
 
 class CameraSequence(
     private val world: World
@@ -37,19 +40,9 @@ class CameraSequence(
         pathMap[calculatedPath] = time
     }
 
-    private fun getFullPath(): HashMap<Int, CameraPoint> {
-
-        return pathMap.map { it.key.calculatedPoints }
-            .reduce { acc, calculatedPath ->
-                val merged = hashMapOf<Int, CameraPoint>()
-                acc.forEach { (tick, point) ->
-                    merged[tick] = point
-                }
-                calculatedPath.forEach { (tick, point) ->
-                    merged[tick] = point
-                }
-                merged
-            }
+    private fun getFullPath(): List<CameraPoint> {
+        pathMap.keys.forEach { println(it.calculatedPoints) }
+        return pathMap.keys.flatMap { it.calculatedPoints.values }
     }
 
     fun play(players: List<Player>) {
@@ -63,13 +56,12 @@ class CameraSequence(
         NMSManager.nms.setInterpolationDuration(entity, 1, players)
         NMSManager.nms.sendSetCameraPacket(entity, players)
 
-
-
         object : BukkitRunnable() {
             var index = 0
             val fullPath = getFullPath()
+
             override fun run() {
-                if (index >= pathMap.values.size) {
+                if (index >= fullPath.size) {
                     cancel()
                     return
                 }
@@ -78,6 +70,10 @@ class CameraSequence(
                     NMSManager.nms.sendRemoveEntityPacket(entity, players)
                     throw RuntimeException("Next point not found.")
                 }
+                world.spawn(point.toLocation(world), BlockDisplay::class.java).apply {
+                    transformation = transformation.apply { scale.set(0.5) }
+                    block = Material.RED_CONCRETE.createBlockData()
+                }
                 NMSManager.nms.setEntityLocation(entity, point.toLocation(world))
                 NMSManager.nms.sendTeleportPacket(entity, players)
                 players.forEach { it.sendMessage("Moved $index") }
@@ -85,8 +81,6 @@ class CameraSequence(
             }
 
         }.runTaskTimer(AkariConfig.javaPlugin, 1, 1)
-
-
     }
 
     fun play(player: Player) = play(listOf(player))
