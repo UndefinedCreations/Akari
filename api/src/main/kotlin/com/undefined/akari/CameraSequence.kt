@@ -1,4 +1,4 @@
-@file:Suppress("NO_REFLECTION_IN_CLASS_PATH")
+@file:Suppress("NO_REFLECTION_IN_CLASS_PATH", "SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN")
 
 package com.undefined.akari
 
@@ -6,7 +6,6 @@ import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.algorithm.lerp.LerpAlgorithm
 import com.undefined.akari.camaraPath.CalculatedPath
-import com.undefined.akari.camaraPath.CameraPath
 import com.undefined.akari.camaraPath.CameraPoint
 import com.undefined.akari.entity.BukkitCamera
 import com.undefined.akari.entity.Camera
@@ -21,10 +20,12 @@ class CameraSequence(
     private val world: World
 ) {
 
-    private val pathMap: HashMap<CalculatedPath, Int> = hashMapOf()
+    private val pathMap: MutableList<CalculatedPath> = mutableListOf()
     private var algorithm: Algorithm = LerpAlgorithm()
 
     private var camera: Camera = NMSCamera
+
+    private var generatedPath: HashMap<Int, CameraPoint> = hashMapOf()
 
     fun setBukkitCamera(bukkit: Boolean): CameraSequence = apply {
         camera = if (bukkit) BukkitCamera else NMSCamera
@@ -45,19 +46,36 @@ class CameraSequence(
      * @return
      */
     fun addCameraPath(calculatedPath: CalculatedPath, time: Int = 20): CameraSequence = apply {
-        pathMap[calculatedPath] = time
+        pathMap.add(calculatedPath)
     }
 
-    private fun getFullPath(): List<CameraPoint> {
-        pathMap.keys.forEach { println(it.calculatedPoints) }
-        return pathMap.keys.flatMap { it.calculatedPoints.values }
+    fun preGeneratedPath(): CameraSequence {
+        generatedPath = getFullPath()
+        return this
+    }
+
+    private fun getFullPath(): HashMap<Int, CameraPoint> {
+        return pathMap
+            .map { it.calculatedPoints }
+            .fold(HashMap()) { acc, points -> addToMap(acc, points) }
+    }
+
+    private fun addToMap(firstMap: HashMap<Int, CameraPoint>, secondMap: HashMap<Int, CameraPoint>): HashMap<Int, CameraPoint> {
+        var maxOfFirst = firstMap.keys.maxBy { it }
+        for (entry in secondMap) {
+            maxOfFirst++
+            firstMap[maxOfFirst] = entry.value
+        }
+        return firstMap
     }
 
     fun play(players: List<Player>) {
         if (players.isEmpty()) throw IllegalArgumentException("Players can't be empty")
         if (pathMap.isEmpty()) throw IllegalArgumentException("Camera path can't be empty")
 
-        val startLoc = pathMap.keys.first().calculatedPoints.values.first().toLocation(world)
+        val fullPath = if (generatedPath.isEmpty) getFullPath().toSortedMap().values.toList() else generatedPath.toSortedMap().values.toList()
+
+        val startLoc = fullPath.first().toLocation(world)
 
         val entity = camera.spawn(world, startLoc, players)
         camera.setInterpolationDuration(entity, 1, players)
@@ -65,7 +83,6 @@ class CameraSequence(
 
         object : BukkitRunnable() {
             var index = 0
-            val fullPath = getFullPath()
 
             init {
                 var past: Location? = null

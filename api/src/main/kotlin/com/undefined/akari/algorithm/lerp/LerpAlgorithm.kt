@@ -64,7 +64,7 @@ class LerpAlgorithm : Algorithm {
                 currentTick++
             }
         }
-        return CalculatedPath(calculated)
+        return CalculatedPath(calculated, pointMap)
     }
 
     fun deCasteljau (points: MutableList<Float> = mutableListOf(1f,4f,6f,9f), f: Float): Float {
