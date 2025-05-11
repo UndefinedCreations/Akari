@@ -8,6 +8,8 @@ import com.undefined.akari.algorithm.lerp.LerpAlgorithm
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPoint
 import com.undefined.akari.manager.NMSManager
+import com.undefined.akari.util.LineUtil
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.BlockDisplay
@@ -60,6 +62,20 @@ class CameraSequence(
             var index = 0
             val fullPath = getFullPath()
 
+            init {
+                var past: Location? = null
+
+                for (point in fullPath) {
+                    if (past == null) {
+                        past = point.toLocation(world)
+                        continue
+                    }
+                    val newLoc = point.toLocation(world)
+                    LineUtil.createLine(past, newLoc)
+                    past = newLoc
+                }
+            }
+
             override fun run() {
                 if (index >= fullPath.size) {
                     cancel()
@@ -69,10 +85,6 @@ class CameraSequence(
                 if (point == null) {
                     NMSManager.nms.sendRemoveEntityPacket(entity, players)
                     throw RuntimeException("Next point not found.")
-                }
-                world.spawn(point.toLocation(world), BlockDisplay::class.java).apply {
-                    transformation = transformation.apply { scale.set(0.5) }
-                    block = Material.RED_CONCRETE.createBlockData()
                 }
                 NMSManager.nms.setEntityLocation(entity, point.toLocation(world))
                 NMSManager.nms.sendTeleportPacket(entity, players)
