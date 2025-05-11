@@ -3,6 +3,7 @@ package com.undefined.akari
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.camaraPath.CameraPath
 import com.undefined.akari.camaraPath.CameraPoint
+import com.undefined.akari.camaraPath.toCamaraPoint
 import com.undefined.lynx.logger.sendWarn
 import com.undefined.stellar.StellarCommand
 import org.bukkit.command.CommandSender
@@ -20,12 +21,13 @@ object TestCommand {
                 player.sendMessage("Test command executed.")
 
                 CameraSequence(player.world)
+                    .setBukkitCamera(true)
                     .addCameraPath(
                         CameraPath()
                             .setAlgorithm(AlgorithmType.LERP)
                             .addCamaraPoint(CameraPoint(Vector(0.0, 0.0, 0.0), 0f, 0f), 20)
-                            .addCamaraPoint(CameraPoint(Vector(0.0, 30.0, 0.0), 0f, 0f), 60)
-                            .addCamaraPoint(CameraPoint(Vector(0.0, 70.0, 0.0), 50f, 30f), 60)
+                            .addCamaraPoint(CameraPoint(Vector(10.0, 30.0, 0.0), 0f, 0f), 60)
+                            .addCamaraPoint(CameraPoint(Vector(-25.0, 70.0, 0.0), 50f, 30f), 60)
                             .calculatePoints()
                     )
                     .play(player)
