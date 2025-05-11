@@ -1,18 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    id("setup")
+    id("com.gradleup.shadow")
 }
 
 dependencies {
+    compileOnly(libs.spigot)
     compileOnly(project(":common"))
-    compileOnly(project(":v1_21_3"))
-}
-
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "21"
-    }
-}
-
-kotlin {
-    jvmToolchain(21)
+    compileOnly(project(":nms:v1_21_5"))
 }

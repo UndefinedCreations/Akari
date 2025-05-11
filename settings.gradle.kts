@@ -1,2 +1,7 @@
 rootProject.name = "Akari"
-include("common", "api", "server", "v1_21_3")
+include(
+    ":common",
+    ":api",
+    ":server",
+    ":nms:v1_21_5"
+)

@@ -2,4 +2,3 @@ name: Akari
 version: '${version}'
 main: com.undefined.akari.Main
 api-version: '1.21'
-author: UndefinedCreation
