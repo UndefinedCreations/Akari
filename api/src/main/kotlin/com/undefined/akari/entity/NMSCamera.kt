@@ -1,6 +1,8 @@
 package com.undefined.akari.entity
 
+import com.undefined.akari.AkariConfig
 import com.undefined.akari.manager.NMSManager
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -32,8 +34,10 @@ object NMSCamera : Camera {
     }
 
     override fun teleport(entity: Any, location: Location, players: List<Player>) {
-        NMSManager.nms.setEntityLocation(entity, location)
-        NMSManager.nms.sendTeleportPacket(entity, players)
+        Bukkit.getScheduler().runTaskAsynchronously(AkariConfig.javaPlugin, Runnable {
+            NMSManager.nms.setEntityLocation(entity, location)
+            NMSManager.nms.sendTeleportPacket(entity, players)
+        })
     }
 
     override fun kill(entity: Any, players: List<Player>) {

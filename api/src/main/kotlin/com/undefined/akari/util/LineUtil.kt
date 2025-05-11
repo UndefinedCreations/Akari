@@ -12,7 +12,29 @@ import kotlin.math.atan2
 
 object LineUtil {
 
-    fun createLine(loc1: Location, loc2: Location) {
+    private val material: List<Material> =
+        listOf(
+            Material.WHITE_CONCRETE,
+            Material.ORANGE_CONCRETE,
+            Material.MAGENTA_CONCRETE,
+            Material.LIGHT_BLUE_CONCRETE,
+            Material.YELLOW_CONCRETE,
+            Material.LIME_CONCRETE,
+            Material.PINK_CONCRETE,
+            Material.GRAY_CONCRETE,
+            Material.LIGHT_GRAY_CONCRETE,
+            Material.CYAN_CONCRETE,
+            Material.PURPLE_CONCRETE,
+            Material.BLUE_CONCRETE,
+            Material.BROWN_CONCRETE,
+            Material.GREEN_CONCRETE,
+            Material.RED_CONCRETE,
+            Material.BLACK_CONCRETE
+        )
+
+    fun randomMaterial() = material.random()
+
+    fun createLine(loc1: Location, loc2: Location, material: Material) {
         val startLoc = loc1.clone().apply {
             yaw = 0f
             pitch = 0f
@@ -28,7 +50,7 @@ object LineUtil {
         val scale = Vector3f(.2f, .2f, length)
         val display = loc1.world!!.spawn(startLoc, BlockDisplay::class.java)
 
-        display.block = Material.RED_CONCRETE.createBlockData()
+        display.block = material.createBlockData()
 
         val rotation: Quaternionf = Quaternionf()
             .rotateY(yaw)

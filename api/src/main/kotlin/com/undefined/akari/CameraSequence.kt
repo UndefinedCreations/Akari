@@ -2,9 +2,9 @@
 
 package com.undefined.akari
 
-import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.camaraPath.CalculatedPath
+import com.undefined.akari.camaraPath.CameraPath
 import com.undefined.akari.camaraPath.CameraPoint
 import com.undefined.akari.entity.BukkitCamera
 import com.undefined.akari.entity.Camera
@@ -14,17 +14,16 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
+import java.util.SortedMap
 
 class CameraSequence(
     private val world: World
 ) {
 
-    private val pathMap: MutableList<CalculatedPath> = mutableListOf()
-    private var algorithm: Algorithm = AlgorithmType.SMOOTHSTEP.klass
+    private val pathMap: SortedMap<Int, CalculatedPath> = sortedMapOf()
+    private var algorithm: AlgorithmType = AlgorithmType.INSTANT
 
     private var camera: Camera = NMSCamera
-
-    private var generatedPath: HashMap<Int, CameraPoint> = hashMapOf()
 
     fun setBukkitCamera(bukkit: Boolean): CameraSequence = apply {
         camera = if (bukkit) BukkitCamera else NMSCamera
@@ -33,8 +32,8 @@ class CameraSequence(
     /**
      * Sets smoothing algorithm for merging paths and return the modified [CameraSequence].
      */
-    fun setBridge(algorithmType: AlgorithmType): CameraSequence = apply {
-        this.algorithm = AlgorithmType.SMOOTHSTEP.klass
+    fun setBridgeAlgorithm(algorithmType: AlgorithmType): CameraSequence = apply {
+        this.algorithm = algorithmType
     }
 
     /**
@@ -45,36 +44,39 @@ class CameraSequence(
      * @return
      */
     fun addCameraPath(calculatedPath: CalculatedPath, time: Int = 20): CameraSequence = apply {
-        pathMap.add(calculatedPath)
+        if (!pathMap.isEmpty && algorithm != AlgorithmType.INSTANT) addBridgePath(calculatedPath, time)
+        pathMap[pathMap.size] = calculatedPath
     }
 
-    fun preGeneratedPath(): CameraSequence {
-        generatedPath = getFullPath()
-        return this
+    private fun addBridgePath(calculatedPath: CalculatedPath, time: Int) {
+        val points = pathMap.lastEntry().value.calculatedPoints.values.toList()
+        val lastPoint = points.last()
+        val secondToLastPoint = points[points.size - 2]
+
+        val firstNext = calculatedPath.calculatedPoints.values.first()
+        val secondNext = calculatedPath.calculatedPoints.values.toList()[1]
+
+        val bridgePath: CalculatedPath = CameraPath()
+            .setAlgorithm(algorithm)
+            .addCamaraPoint(secondToLastPoint, 0)
+            .addCamaraPoint(lastPoint, 0)
+            .addCamaraPoint(firstNext, time)
+            .addCamaraPoint(secondNext, 0)
+            .calculatePoints()
+
+        //TODO Make this smoother
+        pathMap[pathMap.size] = bridgePath
+
     }
 
-    private fun getFullPath(): HashMap<Int, CameraPoint> {
-        return pathMap
-            .map { it.calculatedPoints }
-            .fold(HashMap()) { acc, points -> addToMap(acc, points) }
-    }
-
-    private fun addToMap(firstMap: HashMap<Int, CameraPoint>, secondMap: HashMap<Int, CameraPoint>): HashMap<Int, CameraPoint> {
-        var maxOfFirst = if (firstMap.isEmpty()) -1 else firstMap.keys.maxBy { it }
-        for (entry in secondMap) {
-            maxOfFirst++
-            firstMap[maxOfFirst] = entry.value
-        }
-        return firstMap
-    }
 
     fun play(players: List<Player>) {
         if (players.isEmpty()) throw IllegalArgumentException("Players can't be empty")
         if (pathMap.isEmpty()) throw IllegalArgumentException("Camera path can't be empty")
 
-        val fullPath = if (generatedPath.isEmpty) getFullPath().toSortedMap().values.toList() else generatedPath.toSortedMap().values.toList()
+        val finalPathMap = pathMap.values.flatMap { it.calculatedPoints.values }
 
-        val startLoc = fullPath.first().toLocation(world)
+        val startLoc = pathMap.firstEntry().value.calculatedPoints.values.first().toLocation(world)
 
         val entity = camera.spawn(world, startLoc, players)
         camera.setInterpolationDuration(entity, 1, players)
@@ -86,23 +88,28 @@ class CameraSequence(
             init {
                 var past: Location? = null
 
-                for (point in fullPath) {
-                    if (past == null) {
-                        past = point.toLocation(world)
-                        continue
+                println(pathMap.size)
+
+                pathMap.forEach {
+                    val material = LineUtil.randomMaterial()
+                    for (point in it.value.calculatedPoints.values) {
+                        if (past == null) {
+                            past = point.toLocation(world)
+                            continue
+                        }
+                        val newLoc = point.toLocation(world)
+//                        LineUtil.createLine(past, newLoc, material)
+                        past = newLoc
                     }
-                    val newLoc = point.toLocation(world)
-                    LineUtil.createLine(past, newLoc)
-                    past = newLoc
                 }
             }
 
             override fun run() {
-                if (index >= fullPath.size) {
+                if (index >= finalPathMap.size) {
                     cancel()
                     return
                 }
-                val point: CameraPoint? = fullPath[index]
+                val point: CameraPoint? = finalPathMap[index]
                 if (point == null) {
                     camera.removeCamera(players)
                     throw RuntimeException("Next point not found.")
