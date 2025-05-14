@@ -7,12 +7,9 @@ import org.bukkit.plugin.java.JavaPlugin
 class Main : JavaPlugin() {
 
     override fun onEnable() {
-        AkariConfig
-            .setPlugin(this)
-        LynxConfig
-            .setPlugin(this)
-        StellarConfig
-            .setPlugin(this)
+        AkariConfig.setPlugin(this)
+        LynxConfig.setPlugin(this)
+        StellarConfig.setPlugin(this)
 
         TestCommand.register()
     }
