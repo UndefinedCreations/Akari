@@ -45,9 +45,11 @@ val packageSources by tasks.registering(Jar::class) {
 
 publishing {
     publications {
-        create<MavenPublication>("baseJar") {
+        create<MavenPublication>("kotlin") {
             artifactId = rootProject.name
             from(components["shadow"])
+            artifact(packageJavadoc)
+            artifact(packageSources)
 
             pom {
                 name = "Lynx"
@@ -81,46 +83,6 @@ publishing {
                     url = "https://github.com/UndefinedCreations/Lynx/"
                     connection = "scm:git:git://github.com/UndefinedCreations/Lynx.git"
                     developerConnection = "scm:git:ssh://git@github.com/UndefinedCreations/Lynx.git"
-                }
-            }
-        }
-        create<MavenPublication>("sources") {
-            artifactId = rootProject.name
-            artifact(packageJavadoc)
-            artifact(packageSources)
-
-            pom {
-                name = "Akari"
-                description = "A general purpose API for Java and Kotlin."
-                url = "https://www.github.com/UndefinedCreations/Lynx"
-                licenses {
-                    license {
-                        name = "MIT"
-                        url = "https://mit-license.org/"
-                        distribution = "https://mit-license.org/"
-                    }
-                }
-                developers {
-                    developer {
-                        id = "lars"
-                        name = "Larskrs"
-                        url = "https://github.com/larskrs/"
-                    }
-                    developer {
-                        id = "redmagic"
-                        name = "TheRedMagic"
-                        url = "https://github.com/TheRedMagic/"
-                    }
-                    developer {
-                        id = "lutto"
-                        name = "StillLutto"
-                        url = "https://github.com/StillLutto/"
-                    }
-                }
-                scm {
-                    url = "https://github.com/UndefinedCreations/Akari/"
-                    connection = "scm:git:git://github.com/UndefinedCreations/Akari.git"
-                    developerConnection = "scm:git:ssh://git@github.com/UndefinedCreations/Akari.git"
                 }
             }
         }
