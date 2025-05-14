@@ -9,4 +9,4 @@ class CameraPoint(
     override var pitch: Float,
 ): AbstractControlPoint<CameraPoint>(position, yaw, pitch)
 
-fun Location.toCamaraPoint(): CameraPoint = CameraPoint(this.toVector(), this.yaw, this.pitch)
+fun Location.toCameraPoint(): CameraPoint = CameraPoint(this.toVector(), this.yaw, this.pitch)
