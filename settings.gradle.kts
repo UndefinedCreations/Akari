@@ -1,7 +1,7 @@
-rootProject.name = "Akari"
+rootProject.name = "akari"
 include(
     ":common",
-    ":api",
+    ":core",
     ":server",
     ":nms:v1_21_5"
 )

@@ -11,6 +11,10 @@ plugins {
 dependencies {
     compileOnly(libs.spigot)
 
+    api(project(":core"))
+    api(project(":common"))
+    api(project(":nms:v1_21_5"))
+
     dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:2.0.0")
 }
 
@@ -24,13 +28,13 @@ subprojects {
     }
 }
 
-//val packageJavadoc by tasks.registering(Jar::class) {
-//    group = "akari"
-//    archiveClassifier = "javadoc"
-//
-//    dependsOn(tasks.dokkaJavadocCollector)
-//    from(tasks.dokkaJavadocCollector.flatMap { it.outputDirectory })
-//}
+val packageJavadoc by tasks.registering(Jar::class) {
+    group = "akari"
+    archiveClassifier = "javadoc"
+
+    dependsOn(tasks.dokkaJavadocCollector)
+    from(tasks.dokkaJavadocCollector.flatMap { it.outputDirectory })
+}
 
 val packageSources by tasks.registering(Jar::class) {
     group = "akari"
@@ -41,9 +45,48 @@ val packageSources by tasks.registering(Jar::class) {
 
 publishing {
     publications {
+        create<MavenPublication>("baseJar") {
+            artifactId = rootProject.name
+            from(components["shadow"])
+
+            pom {
+                name = "Lynx"
+                description = "A general purpose API for Java and Kotlin."
+                url = "https://www.github.com/UndefinedCreations/Lynx"
+                licenses {
+                    license {
+                        name = "MIT"
+                        url = "https://mit-license.org/"
+                        distribution = "https://mit-license.org/"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "lars"
+                        name = "Larskrs"
+                        url = "https://github.com/larskrs/"
+                    }
+                    developer {
+                        id = "redmagic"
+                        name = "TheRedMagic"
+                        url = "https://github.com/TheRedMagic/"
+                    }
+                    developer {
+                        id = "lutto"
+                        name = "StillLutto"
+                        url = "https://github.com/StillLutto/"
+                    }
+                }
+                scm {
+                    url = "https://github.com/UndefinedCreations/Lynx/"
+                    connection = "scm:git:git://github.com/UndefinedCreations/Lynx.git"
+                    developerConnection = "scm:git:ssh://git@github.com/UndefinedCreations/Lynx.git"
+                }
+            }
+        }
         create<MavenPublication>("sources") {
             artifactId = rootProject.name
-//            artifact(packageJavadoc)
+            artifact(packageJavadoc)
             artifact(packageSources)
 
             pom {
@@ -59,6 +102,11 @@ publishing {
                 }
                 developers {
                     developer {
+                        id = "lars"
+                        name = "Larskrs"
+                        url = "https://github.com/larskrs/"
+                    }
+                    developer {
                         id = "redmagic"
                         name = "TheRedMagic"
                         url = "https://github.com/TheRedMagic/"
@@ -67,11 +115,6 @@ publishing {
                         id = "lutto"
                         name = "StillLutto"
                         url = "https://github.com/StillLutto/"
-                    }
-                    developer {
-                        id = "lars"
-                        name = "Larskrs"
-                        url = "https://github.com/larskrs/"
                     }
                 }
                 scm {
@@ -101,6 +144,6 @@ java {
 
 tasks {
     shadowJar {
-        archiveClassifier = "all"
+        archiveClassifier = ""
     }
 }
