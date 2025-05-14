@@ -98,7 +98,7 @@ class CameraSequence(
                             continue
                         }
                         val newLoc = point.toLocation(world)
-                        LineUtil.createLine(past, newLoc, material)
+//                        LineUtil.createLine(past, newLoc, material)
                         past = newLoc
                     }
                 }
