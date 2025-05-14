@@ -14,5 +14,3 @@ class Main : JavaPlugin() {
         TestCommand.register()
     }
 }
-
-
