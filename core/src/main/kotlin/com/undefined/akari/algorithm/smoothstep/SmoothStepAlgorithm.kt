@@ -59,8 +59,6 @@ object SmoothStepAlgorithm : Algorithm {
                 val t = (currentTick - aTick).toFloat() / (bTick - aTick)
                 val interpolatedPoint = MathUtils.smoothStep(a, b, t)
                 calculated[currentTick] = interpolatedPoint  // Add to calculated
-                println("Tick: $currentTick -> $interpolatedPoint")
-
                 currentTick++
             }
         }

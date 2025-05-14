@@ -115,7 +115,6 @@ class CameraSequence(
                     throw RuntimeException("Next point not found.")
                 }
                 camera.teleport(entity, point.toLocation(world), players)
-                players.forEach { it.sendMessage("Moved $index") }
                 index++
             }
 
