@@ -6,6 +6,8 @@ import com.undefined.akari.camaraPath.CameraPoint
 import com.undefined.akari.camaraPath.toCamaraPoint
 import com.undefined.lynx.logger.sendWarn
 import com.undefined.stellar.StellarCommand
+import com.undefined.stellar.argument.world.LocationType
+import org.bukkit.Location
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
@@ -43,6 +45,28 @@ object TestCommand {
                 player.sendMessage("Camera path calculated.")
            }
         main.register()
+
+        val gta = StellarCommand("tpgta")
+            .addAlias("gta")
+            .setDescription("Test command")
+            .addLocationArgument("location",LocationType.LOCATION_3D)
+            .addExecution<Player> {
+                val location: Location by args
+                val height: Double = location.y + 100
+                CameraSequence(sender.world)
+                    .setEndingPoint(location.toCameraPoint())
+                    .addCameraPath(
+                        CameraPath()
+                            .addCamaraPoint(sender.eyeLocation.toCameraPoint(),0)
+                            .addCamaraPoint(sender.eyeLocation.toCameraPoint().setPosition(Vector(sender.eyeLocation.x, height, sender.eyeLocation.z)).setPitch(90f),60)
+                            .addCamaraPoint(location.toCameraPoint().setPosition(location.x, height, location.z).setPitch(90f),60)
+                            .addCamaraPoint(location.toCameraPoint(), 60)
+                            .calculatePoints()
+                    )
+                    .play(sender)
+            }
+        gta.register()
     }
+
 
 }

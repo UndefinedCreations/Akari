@@ -7,7 +7,7 @@ import kotlin.math.acos
 import kotlin.math.atan2
 
 abstract class AbstractControlPoint<T>(
-    open val position: Vector,
+    open var position: Vector,
     open var yaw: Float,
     open var pitch: Float,
 ) {
@@ -37,6 +37,18 @@ abstract class AbstractControlPoint<T>(
 
     fun addPosition(vector: Vector): T = apply {
         this.position.add(vector)
+    } as T
+    fun setPosition(vector: Vector): T = apply {
+        this.position = vector
+    } as T
+    fun setPosition(x: Double,y: Double,z: Double): T = apply {
+        this.position = Vector(x,y,z)
+    } as T
+    fun setPosition(x: Int,y: Int,z: Int,): T = apply {
+        this.position = Vector(x,y,z)
+    } as T
+    fun setPosition(x: Float,y: Float,z: Float,): T = apply {
+        this.position = Vector(x,y,z)
     } as T
 
 }

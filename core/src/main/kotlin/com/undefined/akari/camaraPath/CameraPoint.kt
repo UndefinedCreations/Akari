@@ -6,7 +6,7 @@ import kotlin.math.atan2
 import kotlin.math.sqrt
 
 class CameraPoint(
-    override val position: Vector,
+    override var position: Vector,
     override var yaw: Float,
     override var pitch: Float,
 ): AbstractControlPoint<CameraPoint>(position, yaw, pitch)

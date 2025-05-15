@@ -23,6 +23,7 @@ class CameraSequence(
     private val pathMap: SortedMap<Int, CalculatedPath> = sortedMapOf()
     private var algorithm: AlgorithmType = AlgorithmType.INSTANT
 
+    private var endingPoint: CameraPoint? = null
     private var showLines = false
 
     fun showLines(show: Boolean) = apply {
@@ -130,10 +131,19 @@ class CameraSequence(
                 super.cancel()
                 camera.removeCamera(players)
                 camera.kill(entity, players)
+                if (endingPoint != null) {
+                    val loc = endingPoint!!.toLocation(world)
+                    players.forEach {
+                        it.teleport(loc)
+                    }
+                }
             }
         }.runTaskTimer(AkariConfig.javaPlugin, 1, 1)
     }
 
     fun play(player: Player) = play(listOf(player))
+    fun setEndingPoint(point: CameraPoint) = apply {
+        endingPoint = point
+    }
 
 }
