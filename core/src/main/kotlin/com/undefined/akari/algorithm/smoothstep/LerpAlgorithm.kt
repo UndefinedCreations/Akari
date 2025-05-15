@@ -7,27 +7,11 @@ import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPoint
 import org.bukkit.util.Vector
 
-object SmoothStepAlgorithm : Algorithm {
+object LerpAlgorithm : Algorithm {
 
     object MathUtils {
         fun lerp(a: Float, b: Float, f: Float): Float {
             return a + f * (b - a)
-        }
-        fun smoothStep(a: Float, b: Float, f: Float): Float {
-            val t = f.coerceIn(0f, 1f)
-            val smooth = t * t * (3 - 2 * t)
-            return a + smooth * (b - a)
-        }
-        fun smoothStep(a: CameraPoint, b: CameraPoint, t: Float): CameraPoint {
-            return CameraPoint(
-                Vector(
-                    smoothStep(a.position.x.toFloat(), b.position.x.toFloat(), t),
-                    smoothStep(a.position.y.toFloat(), b.position.y.toFloat(), t),
-                    smoothStep(a.position.z.toFloat(), b.position.z.toFloat(), t)
-                ),
-                smoothStep(a.yaw, b.yaw, t),
-                smoothStep(a.pitch, b.pitch, t)
-            )
         }
         fun lerp(a: CameraPoint, b: CameraPoint, t: Float): CameraPoint {
             return CameraPoint(
@@ -57,8 +41,10 @@ object SmoothStepAlgorithm : Algorithm {
 
             while (currentTick < bTick) {
                 val t = (currentTick - aTick).toFloat() / (bTick - aTick)
-                val interpolatedPoint = MathUtils.smoothStep(a, b, t)
+                val interpolatedPoint = MathUtils.lerp(a, b, t)
                 calculated[currentTick] = interpolatedPoint  // Add to calculated
+                println("Tick: $currentTick -> $interpolatedPoint")
+
                 currentTick++
             }
         }
