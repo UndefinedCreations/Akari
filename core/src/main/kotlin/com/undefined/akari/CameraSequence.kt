@@ -23,6 +23,12 @@ class CameraSequence(
     private val pathMap: SortedMap<Int, CalculatedPath> = sortedMapOf()
     private var algorithm: AlgorithmType = AlgorithmType.INSTANT
 
+    private var showLines = false
+
+    fun showLines(show: Boolean) = apply {
+        this.showLines = show
+    }
+
     private var camera: Camera = NMSCamera
 
     fun setBukkitCamera(bukkit: Boolean): CameraSequence = apply {
@@ -98,7 +104,9 @@ class CameraSequence(
                             continue
                         }
                         val newLoc = point.toLocation(world)
-//                        LineUtil.createLine(past, newLoc, material)
+                        if (showLines) {
+                            LineUtil.createLine(past, newLoc, material)
+                        }
                         past = newLoc
                     }
                 }

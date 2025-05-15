@@ -21,21 +21,23 @@ object TestCommand {
                 player.sendMessage("Test command executed.")
 
                 CameraSequence(player.world)
+                    .showLines(false)
                     .setBukkitCamera(false)
+                    .setBridgeAlgorithm(AlgorithmType.SMOOTHSTEP)
                     .addCameraPath(
                         CameraPath()
                             .setAlgorithm(AlgorithmType.BSPLINE)
                             .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 5, 0)),60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)),0)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)).setYaw(90f).addPosition(Vector(10,2,5)), 60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)).setYaw(90f).setPitch(70f).addPosition(Vector(40,0,5)), 60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)).setYaw(30f).setPitch(70f).addPosition(Vector(10,0,50)), 60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)).setYaw(90f).addPosition(Vector(10,2,5)), 60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 5, 0)),60)
+                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)),10)
+                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 5, 0)),10)
                             .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)),60)
                             .calculatePoints(),
                         100
                     )
+                    .addCameraPath(
+                        OrbitalPath(player.eyeLocation, 4f, 2.0, 60).calculatePoints())
+                    .addCameraPath(
+                        OrbitalPath(player.eyeLocation, 8f,6.0, 60).calculatePoints())
                     .play(player)
 
                 player.sendMessage("Camera path calculated.")

@@ -6,10 +6,10 @@ import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.algorithm.AlgorithmType
 import org.bukkit.Location
 
-class CameraPath {
+class CameraPath (): AbstractCameraPath() {
 
-    private val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
-    private var algorithm: Algorithm = AlgorithmType.SMOOTHSTEP.klass
+    override val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
+    var algorithm: Algorithm = AlgorithmType.SMOOTHSTEP.klass
 
     fun setAlgorithm(algorithmType: AlgorithmType): CameraPath {
         this.algorithm = algorithmType.klass
@@ -22,8 +22,6 @@ class CameraPath {
         return this
     }
 
-    fun calculatePoints(): CalculatedPath = algorithm.calculatePoints(pointMap)
-
-    fun addLocationPoint(location: Location, time: Int = 20): CameraPath = addCamaraPoint(location.toCameraPoint(), time)
+    override fun calculatePoints(): CalculatedPath = algorithm.calculatePoints(pointMap)
 
 }
