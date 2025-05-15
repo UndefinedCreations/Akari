@@ -1,7 +1,8 @@
-@file:Suppress("NO_REFLECTION_IN_CLASS_PATH", "SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN")
+@file:Suppress("SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN")
 
-package com.undefined.akari
+package com.undefined.akari.player
 
+import com.undefined.akari.AkariConfig
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPath
@@ -20,14 +21,9 @@ class CameraSequence(
     private val world: World
 ) {
 
-    private val pathMap: SortedMap<Int, CalculatedPath> = sortedMapOf()
+    internal val pathMap: SortedMap<Int, CalculatedPath> = sortedMapOf()
     private var algorithm: AlgorithmType = AlgorithmType.INSTANT
 
-    private var camera: Camera = NMSCamera
-
-    fun setBukkitCamera(bukkit: Boolean): CameraSequence = apply {
-        camera = if (bukkit) BukkitCamera else NMSCamera
-    }
 
     /**
      * Sets smoothing algorithm for merging paths and return the modified [CameraSequence].
@@ -44,7 +40,7 @@ class CameraSequence(
      * @return
      */
     fun addCameraPath(calculatedPath: CalculatedPath, time: Int = 20): CameraSequence = apply {
-        if (!pathMap.isEmpty && algorithm != AlgorithmType.INSTANT) addBridgePath(calculatedPath, time)
+        if (!pathMap.isEmpty() && algorithm != AlgorithmType.INSTANT) addBridgePath(calculatedPath, time)
         pathMap[pathMap.size] = calculatedPath
     }
 
