@@ -5,6 +5,7 @@ package com.undefined.akari.nms.v1_21_5
 import com.undefined.akari.nms.NMS
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
 import net.minecraft.network.protocol.game.ClientboundSetCameraPacket
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket

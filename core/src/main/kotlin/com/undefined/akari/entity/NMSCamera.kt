@@ -2,19 +2,29 @@ package com.undefined.akari.entity
 
 import com.undefined.akari.AkariConfig
 import com.undefined.akari.manager.NMSManager
+import com.undefined.akari.player.CameraEntity
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
 
 object NMSCamera : Camera {
 
-    override fun spawn(world: World, location: Location, players: List<Player>): Any {
-        val entity = NMSManager.nms.createItemDisplay(world)
+    override fun createEntity(world: World): Any = NMSManager.nms.createItemDisplay(world)
+
+    override fun createServerEntity(entity: Any, world: World): Any? = NMSManager.nms.createServerEntity(entity, world)
+
+    override fun spawnForClient(entity: Any, serverEntity: Any?, player: Player) {
+        NMSManager.nms.sendSpawnPacket(entity, serverEntity, listOf(player))
+    }
+
+    override fun spawn(world: World, location: Location, players: List<Player>): CameraEntity {
+        val entity = createEntity(world)
         NMSManager.nms.setEntityLocation(entity, location)
-        val serverEntity = NMSManager.nms.createServerEntity(entity, world)
-        NMSManager.nms.sendSpawnPacket(entity, serverEntity, players)
-        return entity
+        val serverEntity = createServerEntity(entity, world)
+        players.forEach { spawnForClient(entity, serverEntity, it) }
+        return CameraEntity(entity, serverEntity)
     }
 
     override fun setInterpolationDuration(
@@ -34,10 +44,10 @@ object NMSCamera : Camera {
     }
 
     override fun teleport(entity: Any, location: Location, players: List<Player>) {
-        Bukkit.getScheduler().runTaskAsynchronously(AkariConfig.javaPlugin, Runnable {
+        CompletableFuture.supplyAsync {
             NMSManager.nms.setEntityLocation(entity, location)
             NMSManager.nms.sendTeleportPacket(entity, players)
-        })
+        }
     }
 
     override fun kill(entity: Any, players: List<Player>) {
