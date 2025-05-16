@@ -104,7 +104,6 @@ class CameraPlayer(
 
         bukkitTask = object : BukkitRunnable() {
             override fun run() {
-                println("$index + ${path.size}")
                 if (index >= path.size && !looping) {
                     stop()
                     return
@@ -119,6 +118,7 @@ class CameraPlayer(
     private fun cancelTask() {
         if (bukkitTask == null) return
         bukkitTask!!.cancel()
+        bukkitTask = null
         players.clear()
     }
 

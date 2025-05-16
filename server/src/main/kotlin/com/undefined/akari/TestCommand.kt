@@ -40,6 +40,9 @@ object TestCommand {
                 CameraPlayer(player.world) {
 
                     this.cameraSequence = camSeq
+                    this.looping = true
+
+                    start(player)
 
                 }
 
