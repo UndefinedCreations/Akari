@@ -7,6 +7,7 @@ import com.undefined.akari.player.CameraPlayer
 import com.undefined.akari.player.CameraSequence
 import com.undefined.lynx.logger.sendWarn
 import com.undefined.stellar.StellarCommand
+import org.bukkit.GameMode
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
@@ -36,7 +37,6 @@ object TestCommand {
                             )
                         }
                     )
-
                 }
 
                 player.sendMessage("Camera path calculated.")

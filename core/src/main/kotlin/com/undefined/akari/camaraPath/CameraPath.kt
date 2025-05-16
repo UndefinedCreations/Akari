@@ -23,12 +23,17 @@ class CameraPath(
         this.algorithm = algorithmType.klass
     }
 
-    fun addCamaraPoint(cameraPoint: CameraPoint, time: Int = 20) = apply {
+    fun addCamaraPoint(
+        cameraPoint: CameraPoint,
+        time: Int = 20,
+        kotlinDSL: CameraPoint.() -> Unit = {}
+    ) = apply {
         val highestPoint = if (pointMap.isEmpty()) 0 else pointMap.keys.maxOf { it }
         pointMap[highestPoint+time] = if (localCameraPoint == null) cameraPoint else cameraPoint
             .addPosition(localCameraPoint!!.position)
             .setYaw(localCameraPoint!!.yaw)
             .setPitch(localCameraPoint!!.pitch)
+        kotlinDSL(cameraPoint)
     }
 
     fun addCamaraPoint(
@@ -37,9 +42,10 @@ class CameraPath(
         z: Double = 0.0,
         yaw: Float = 0f,
         pitch: Float = 0f,
-        time: Int = 20
+        time: Int = 20,
+        kotlinDSL: CameraPoint.() -> Unit = {}
     ) = apply {
-        addCamaraPoint(CameraPoint(x, y, z, yaw, pitch), time)
+        addCamaraPoint(CameraPoint(x, y, z, yaw, pitch), time, kotlinDSL)
     }
 
     override fun calculatePoints(

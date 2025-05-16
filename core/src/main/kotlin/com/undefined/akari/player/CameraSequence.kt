@@ -15,7 +15,7 @@ class CameraSequence(
 ) {
 
     internal val pathMap: SortedMap<Int, CalculatedPath> = sortedMapOf()
-    var bridgeAlgorithm: AlgorithmType = AlgorithmType.INSTANT
+    private var bridgeAlgorithm: AlgorithmType = AlgorithmType.INSTANT
 
     init {
         kotlinDSL(this)
