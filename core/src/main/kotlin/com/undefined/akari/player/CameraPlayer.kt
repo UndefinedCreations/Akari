@@ -10,6 +10,7 @@ import com.undefined.akari.events.CameraStartEvent
 import com.undefined.akari.events.CameraStopEvent
 import com.undefined.akari.events.PlayerCameraAddEvent
 import com.undefined.akari.events.PlayerCameraKickEvent
+import com.undefined.akari.manager.PlayerManager
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.World
@@ -42,6 +43,7 @@ class CameraPlayer(
         }
 
     init {
+        PlayerManager.addPlayer(this)
         kotlinDSL(this)
     }
 
@@ -70,9 +72,15 @@ class CameraPlayer(
         this.looping = looping
     }
 
+    fun getPlayers (): List<Player> = players.toList()
+
     fun addPlayer(player: Player) = apply {
         val addEvent = PlayerCameraAddEvent(this).also { it.call() }
         if (addEvent.isCancelled) return@apply
+
+        if (PlayerManager.getPlayer(player) != null) {
+            PlayerManager.getPlayer(player)!!.kick(player)
+        }
 
         this.players.add(player)
     }
@@ -118,6 +126,8 @@ class CameraPlayer(
 
         cameraEntity?.run { camera.kill(this.entity, players) }
         cancelTask()
+
+        PlayerManager.removePlayer(this)
     }
 
     private fun startPlayingLoop(playingWorld: World, tickRate: Int) {
