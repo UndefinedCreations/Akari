@@ -4,12 +4,20 @@ package com.undefined.akari.camaraPath
 
 import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.algorithm.AlgorithmType
-import org.bukkit.Location
+import com.undefined.akari.camaraPath.point.CameraPoint
 
-class CameraPath (): AbstractCameraPath() {
+class CameraPath(
+    kotlinDSL: CameraPath.() -> Unit = {}
+): AbstractCameraPath<CameraPath>() {
+
+    init {
+        kotlinDSL(this)
+    }
 
     override val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
     var algorithm: Algorithm = AlgorithmType.SMOOTHSTEP.klass
+
+
 
     fun setAlgorithm(algorithmType: AlgorithmType) = apply {
         this.algorithm = algorithmType.klass
@@ -17,9 +25,25 @@ class CameraPath (): AbstractCameraPath() {
 
     fun addCamaraPoint(cameraPoint: CameraPoint, time: Int = 20) = apply {
         val highestPoint = if (pointMap.isEmpty()) 0 else pointMap.keys.maxOf { it }
-        pointMap[highestPoint+time] = cameraPoint
+        pointMap[highestPoint+time] = if (localCameraPoint == null) cameraPoint else cameraPoint
+            .addPosition(localCameraPoint!!.position)
+            .setYaw(localCameraPoint!!.yaw)
+            .setPitch(localCameraPoint!!.pitch)
     }
 
-    override fun calculatePoints(): CalculatedPath = algorithm.calculatePoints(pointMap)
+    fun addCamaraPoint(
+        x: Double = 0.0,
+        y: Double = 0.0,
+        z: Double = 0.0,
+        yaw: Float = 0f,
+        pitch: Float = 0f,
+        time: Int = 20
+    ) = apply {
+        addCamaraPoint(CameraPoint(x, y, z, yaw, pitch), time)
+    }
+
+    override fun calculatePoints(
+        kotlinDSL: CalculatedPath.() -> Unit
+    ): CalculatedPath = algorithm.calculatePoints(pointMap, kotlinDSL)
 
 }

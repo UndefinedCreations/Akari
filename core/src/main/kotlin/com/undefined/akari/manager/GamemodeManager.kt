@@ -1,7 +1,6 @@
 package com.undefined.akari.manager
 
 import com.undefined.akari.AkariConfig
-import com.undefined.akari.events.AkariEvent
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler

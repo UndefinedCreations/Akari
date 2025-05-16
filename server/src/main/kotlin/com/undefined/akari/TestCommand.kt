@@ -2,7 +2,7 @@ package com.undefined.akari
 
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.camaraPath.CameraPath
-import com.undefined.akari.camaraPath.toCameraPoint
+import com.undefined.akari.camaraPath.point.toCameraPoint
 import com.undefined.akari.player.CameraPlayer
 import com.undefined.akari.player.CameraSequence
 import com.undefined.lynx.logger.sendWarn
@@ -21,28 +21,21 @@ object TestCommand {
                 val player = sender as? Player ?: return@addExecution sendWarn("<red>Only players can use this command.")
                 player.sendMessage("Test command executed.")
 
-                val camSeq = CameraSequence()
-                    .addCameraPath(
-                        CameraPath()
-                            .setAlgorithm(AlgorithmType.BSPLINE)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 5, 0)),60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)),0)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)).setYaw(90f).addPosition(Vector(10,2,5)), 60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)).setYaw(90f).setPitch(70f).addPosition(Vector(40,0,5)), 60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)).setYaw(30f).setPitch(70f).addPosition(Vector(10,0,50)), 60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)).setYaw(90f).addPosition(Vector(10,2,5)), 60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 5, 0)),60)
-                            .addCamaraPoint(player.location.toCameraPoint().addPosition(Vector(0, 0, 0)),60)
-                            .calculatePoints(),
-                        100
+                val calPath = CameraPath {
+                    addCamaraPoint(
+                        x = 0.5
                     )
+                }.calculatePoints()
 
                 CameraPlayer(player.world) {
 
-                    this.cameraSequence = camSeq
-                    this.looping = true
-
-                    start(player)
+                    setCameraSequence(
+                        CameraSequence {
+                            addCameraPath(
+                               calPath.clone().addPosition(player)
+                            )
+                        }
+                    )
 
                 }
 

@@ -4,7 +4,7 @@ package com.undefined.akari.algorithm.smoothstep
 
 import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.camaraPath.CalculatedPath
-import com.undefined.akari.camaraPath.CameraPoint
+import com.undefined.akari.camaraPath.point.CameraPoint
 import org.bukkit.util.Vector
 
 object SmoothStepAlgorithm : Algorithm {
@@ -43,7 +43,7 @@ object SmoothStepAlgorithm : Algorithm {
 
     }
 
-    override fun calculatePoints(pointMap: HashMap<Int, CameraPoint>): CalculatedPath {
+    override fun calculatePoints(pointMap: HashMap<Int, CameraPoint>, kotlinDSL: CalculatedPath.() -> Unit): CalculatedPath {
 
         val sortedTicks = pointMap.keys.sorted()
         var currentTick = sortedTicks.first()
@@ -62,7 +62,7 @@ object SmoothStepAlgorithm : Algorithm {
                 currentTick++
             }
         }
-        return CalculatedPath(calculated, pointMap)
+        return CalculatedPath(calculated, pointMap, kotlinDSL)
     }
 
 }

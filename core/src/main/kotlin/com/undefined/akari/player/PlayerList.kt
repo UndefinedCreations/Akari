@@ -6,7 +6,7 @@ import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import kotlin.reflect.KProperty
 
-class PlayerList(private val cameraPlayer: CameraPlayer, private var state: MutableList<Player>) : MutableList<Player> by state {
+class PlayerList(private val cameraPlayer: CameraPlayer, private var state: MutableSet<Player>) : MutableSet<Player> by state {
 
     override fun add(element: Player): Boolean {
         setAndSaveGameMode(element)
@@ -34,7 +34,7 @@ class PlayerList(private val cameraPlayer: CameraPlayer, private var state: Muta
 
     override fun clear() {
         state.forEach { resetGameMode(it) }
-        if (isNMS()) state.forEach { removePlayerClient(it) } else cameraPlayer.camera.removeCamera(state)
+        if (isNMS()) state.forEach { removePlayerClient(it) } else cameraPlayer.camera.removeCamera(state.toList())
         state.clear()
     }
 

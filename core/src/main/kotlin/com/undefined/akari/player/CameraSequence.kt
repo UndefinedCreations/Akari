@@ -2,32 +2,30 @@
 
 package com.undefined.akari.player
 
-import com.undefined.akari.AkariConfig
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPath
-import com.undefined.akari.camaraPath.CameraPoint
-import com.undefined.akari.entity.BukkitCamera
-import com.undefined.akari.entity.Camera
-import com.undefined.akari.entity.NMSCamera
 import com.undefined.akari.util.LineUtil
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.entity.Player
-import org.bukkit.scheduler.BukkitRunnable
 import java.util.SortedMap
 
-class CameraSequence {
+class CameraSequence(
+    kotlinDSL: CameraSequence.() -> Unit = {}
+) {
 
     internal val pathMap: SortedMap<Int, CalculatedPath> = sortedMapOf()
-    private var algorithm: AlgorithmType = AlgorithmType.INSTANT
+    var bridgeAlgorithm: AlgorithmType = AlgorithmType.INSTANT
 
+    init {
+        kotlinDSL(this)
+    }
 
     /**
      * Sets smoothing algorithm for merging paths and return the modified [CameraSequence].
      */
     fun setBridgeAlgorithm(algorithmType: AlgorithmType): CameraSequence = apply {
-        this.algorithm = algorithmType
+        this.bridgeAlgorithm = algorithmType
     }
 
     /**
@@ -38,7 +36,7 @@ class CameraSequence {
      * @return
      */
     fun addCameraPath(calculatedPath: CalculatedPath, time: Int = 20): CameraSequence = apply {
-        if (!pathMap.isEmpty() && algorithm != AlgorithmType.INSTANT) addBridgePath(calculatedPath, time)
+        if (!pathMap.isEmpty() && bridgeAlgorithm != AlgorithmType.INSTANT) addBridgePath(calculatedPath, time)
         pathMap[pathMap.size] = calculatedPath
     }
 
@@ -51,7 +49,7 @@ class CameraSequence {
         val secondNext = calculatedPath.calculatedPoints.values.toList()[1]
 
         val bridgePath: CalculatedPath = CameraPath()
-            .setAlgorithm(algorithm)
+            .setAlgorithm(bridgeAlgorithm)
             .addCamaraPoint(secondToLastPoint, 0)
             .addCamaraPoint(lastPoint, 0)
             .addCamaraPoint(firstNext, time)

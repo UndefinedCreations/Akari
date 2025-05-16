@@ -1,4 +1,4 @@
-package com.undefined.akari.camaraPath
+package com.undefined.akari.camaraPath.point
 
 import org.bukkit.Location
 import org.bukkit.World
@@ -6,10 +6,11 @@ import org.bukkit.util.Vector
 import kotlin.math.acos
 import kotlin.math.atan2
 
+@Suppress("UNCHECKED_CAST")
 abstract class AbstractControlPoint<T>(
     open var position: Vector,
     open var yaw: Float,
-    open var pitch: Float,
+    open var pitch: Float
 ) {
 
     fun toLocation(world: World): Location = Location(world, position.x, position.y, position.z, yaw, pitch)

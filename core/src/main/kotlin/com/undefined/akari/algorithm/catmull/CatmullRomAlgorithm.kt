@@ -2,7 +2,7 @@ package com.undefined.akari.algorithm.catmull
 
 import com.undefined.akari.algorithm.Algorithm
 import com.undefined.akari.camaraPath.CalculatedPath
-import com.undefined.akari.camaraPath.CameraPoint
+import com.undefined.akari.camaraPath.point.CameraPoint
 import org.bukkit.util.Vector
 
 object CatmullRomAlgorithm: Algorithm {
@@ -34,7 +34,7 @@ object CatmullRomAlgorithm: Algorithm {
         )
     }
 
-    override fun calculatePoints(pointMap: HashMap<Int, CameraPoint>): CalculatedPath {
+    override fun calculatePoints(pointMap: HashMap<Int, CameraPoint>, kotlinDSL: CalculatedPath.() -> Unit): CalculatedPath {
 
         val sortedTicks = pointMap.keys.sorted()
         val calculated: HashMap<Int, CameraPoint> = hashMapOf()
@@ -74,7 +74,7 @@ object CatmullRomAlgorithm: Algorithm {
             }
         }
 
-        return CalculatedPath(calculated, pointMap)
+        return CalculatedPath(calculated, pointMap, kotlinDSL)
     }
 
 

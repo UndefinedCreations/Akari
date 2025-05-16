@@ -3,6 +3,7 @@
 package com.undefined.akari.player
 
 import com.undefined.akari.AkariConfig
+import com.undefined.akari.Options
 import com.undefined.akari.entity.BukkitCamera
 import com.undefined.akari.entity.Camera
 import com.undefined.akari.entity.NMSCamera
@@ -12,7 +13,6 @@ import com.undefined.akari.events.PlayerCameraAddEvent
 import com.undefined.akari.events.PlayerCameraKickEvent
 import com.undefined.akari.manager.PlayerManager
 import org.bukkit.GameMode
-import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
@@ -21,13 +21,13 @@ import kotlin.math.floor
 
 class CameraPlayer(
     var playingWorld: World,
-    private val kotlinDSL: CameraPlayer.() -> Unit = {}
+    kotlinDSL: CameraPlayer.() -> Unit = {}
 ) {
 
     var cameraSequence: CameraSequence? = null
     var looping: Boolean = false
 
-    private val players: PlayerList by PlayerList(this, mutableListOf())
+    val players: PlayerList by PlayerList(this, mutableSetOf())
     internal var active: Boolean = false
 
     internal var cameraEntity: CameraEntity? = null
@@ -43,7 +43,6 @@ class CameraPlayer(
         }
 
     init {
-        PlayerManager.addPlayer(this)
         kotlinDSL(this)
     }
 
@@ -78,8 +77,10 @@ class CameraPlayer(
         val addEvent = PlayerCameraAddEvent(this).also { it.call() }
         if (addEvent.isCancelled) return@apply
 
-        if (PlayerManager.getPlayer(player) != null) {
-            PlayerManager.getPlayer(player)!!.kick(player)
+        if (Options.kickOnMultiple) {
+            if (PlayerManager.getPlayer(player) != null) {
+                PlayerManager.getPlayer(player)!!.kick(player)
+            }
         }
 
         this.players.add(player)
@@ -101,17 +102,19 @@ class CameraPlayer(
 
     fun start(player: Player) = start(listOf(player))
 
-    fun start(players: List<Player>, playingWorld: World? = null) = apply {
+    fun start(players: List<Player> = listOf(), playingWorld: World? = null) = apply {
         if(cameraSequence == null) throw IllegalArgumentException("No CameraSequence set")
 
         val startEvent = CameraStartEvent(this).also { it.call() }
         if (startEvent.isCancelled) return@apply
 
+        PlayerManager.addPlayer(this)
+
         val rate = floor(tickRate / 20.0)
 
         val playingWorld = playingWorld ?: this.playingWorld
 
-        this.players.addAll(players)
+        addPlayers(players)
         this.cameraEntity = camera.spawn(playingWorld, cameraSequence!!.firstLocation(playingWorld), players)
         camera.setInterpolationDuration(cameraEntity!!.entity, rate.toInt(), players)
         camera.setCamera(cameraEntity!!.entity, players)
@@ -124,8 +127,10 @@ class CameraPlayer(
 
         CameraStopEvent(this).call()
 
-        cameraEntity?.run { camera.kill(this.entity, players) }
+        cameraEntity?.run { camera.kill(this.entity, players.toList()) }
         cancelTask()
+
+        active = false
 
         PlayerManager.removePlayer(this)
     }
@@ -142,7 +147,7 @@ class CameraPlayer(
                     return
                 } else if (index >= path.size) index = 0
                 val nextCameraPoint = path[index]
-                camera.teleport(cameraEntity!!.entity, nextCameraPoint.toLocation(playingWorld), players)
+                camera.teleport(cameraEntity!!.entity, nextCameraPoint.toLocation(playingWorld), players.toList())
                 index++
             }
         }.runTaskTimer(AkariConfig.javaPlugin, 0, tickRate.toLong())

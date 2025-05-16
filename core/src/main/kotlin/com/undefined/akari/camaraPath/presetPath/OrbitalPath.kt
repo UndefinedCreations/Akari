@@ -1,15 +1,18 @@
-package com.undefined.akari.camaraPath
+package com.undefined.akari.camaraPath.presetPath
 
-import org.bukkit.EntityEffect
+import com.undefined.akari.camaraPath.AbstractCameraPath
+import com.undefined.akari.camaraPath.CalculatedPath
+import com.undefined.akari.camaraPath.point.CameraPoint
+import com.undefined.akari.camaraPath.point.lookAt
+import com.undefined.akari.camaraPath.point.toCameraPoint
 import org.bukkit.Location
-import org.bukkit.entity.Entity
 import org.bukkit.util.Vector
 import kotlin.math.cos
 import kotlin.math.sin
 
 class OrbitalPath (
     private var center: Location, var radius: Float = 5.0f, var height: Double, var time: Int = 60
-): AbstractCameraPath() {
+): AbstractCameraPath<OrbitalPath>() {
 
     override val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
 
@@ -17,7 +20,7 @@ class OrbitalPath (
         this.center = center
     }
 
-    override fun calculatePoints(): CalculatedPath {
+    override fun calculatePoints(kotlinDSL: CalculatedPath.() -> Unit): CalculatedPath {
         val calculated: HashMap<Int, CameraPoint> = hashMapOf()
 
         val angleStep = 360.0 / time
@@ -36,7 +39,7 @@ class OrbitalPath (
         }
 
 
-        return CalculatedPath(calculated, hashMapOf(0 to center.toCameraPoint()))
+        return CalculatedPath(calculated, hashMapOf(0 to center.toCameraPoint()), kotlinDSL)
     }
 
 }
