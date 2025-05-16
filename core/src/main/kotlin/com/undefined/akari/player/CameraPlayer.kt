@@ -6,6 +6,10 @@ import com.undefined.akari.AkariConfig
 import com.undefined.akari.entity.BukkitCamera
 import com.undefined.akari.entity.Camera
 import com.undefined.akari.entity.NMSCamera
+import com.undefined.akari.events.CameraStartEvent
+import com.undefined.akari.events.CameraStopEvent
+import com.undefined.akari.events.PlayerCameraAddEvent
+import com.undefined.akari.events.PlayerCameraKickEvent
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.World
@@ -66,18 +70,34 @@ class CameraPlayer(
         this.looping = looping
     }
 
-    fun addPlayer(player: Player) = apply { addPlayers(listOf(player)) }
+    fun addPlayer(player: Player) = apply {
+        val addEvent = PlayerCameraAddEvent(this).also { it.call() }
+        if (addEvent.isCancelled) return@apply
 
-    fun addPlayers(players: List<Player>) = apply { this.players.addAll(players) }
+        this.players.add(player)
+    }
 
-    fun kick(player: Player) = apply { kick(listOf(player)) }
+    fun addPlayers(players: List<Player>) = apply {
+        players.forEach { addPlayer(it) }
+    }
 
-    fun kick(players: List<Player>) = apply { this.players.removeAll(players) }
+    fun kick(player: Player) = apply {
+
+        val kickEvent = PlayerCameraKickEvent(this).also { it.call() }
+        if (kickEvent.isCancelled) return@apply
+
+        players.remove(player)
+    }
+
+    fun kick(players: List<Player>) = apply { players.forEach { kick(it) } }
 
     fun start(player: Player) = start(listOf(player))
 
     fun start(players: List<Player>, playingWorld: World? = null) = apply {
         if(cameraSequence == null) throw IllegalArgumentException("No CameraSequence set")
+
+        val startEvent = CameraStartEvent(this).also { it.call() }
+        if (startEvent.isCancelled) return@apply
 
         val rate = floor(tickRate / 20.0)
 
@@ -93,6 +113,9 @@ class CameraPlayer(
     }
 
     fun stop() = apply {
+
+        CameraStopEvent(this).call()
+
         cameraEntity?.run { camera.kill(this.entity, players) }
         cancelTask()
     }
