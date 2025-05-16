@@ -37,9 +37,11 @@ object TestCommand {
                         100
                     )
 
-                CameraPlayer(player.world)
-                    .setCameraSequence(camSeq)
-                    .start(player)
+                CameraPlayer(player.world) {
+
+                    this.cameraSequence = camSeq
+
+                }
 
                 player.sendMessage("Camera path calculated.")
            }

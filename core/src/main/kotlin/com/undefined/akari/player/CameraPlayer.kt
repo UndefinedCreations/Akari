@@ -15,7 +15,8 @@ import org.bukkit.scheduler.BukkitTask
 import kotlin.math.floor
 
 class CameraPlayer(
-    var playingWorld: World
+    var playingWorld: World,
+    private val kotlinDSL: CameraPlayer.() -> Unit = {}
 ) {
 
     var cameraSequence: CameraSequence? = null
@@ -35,6 +36,11 @@ class CameraPlayer(
         set(value) {
             if (value > 0 ) field = value
         }
+
+    init {
+        kotlinDSL(this)
+    }
+
 
     fun setExitGameMode(gameMode: GameMode?) = apply {
         this.exitGameMode = gameMode
