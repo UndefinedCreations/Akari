@@ -17,9 +17,7 @@ import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 import java.util.SortedMap
 
-class CameraSequence(
-    private val world: World
-) {
+class CameraSequence {
 
     internal val pathMap: SortedMap<Int, CalculatedPath> = sortedMapOf()
     private var algorithm: AlgorithmType = AlgorithmType.INSTANT
@@ -65,6 +63,7 @@ class CameraSequence(
 
     }
 
+    fun firstLocation(world: World): Location = pathMap.firstEntry().value.calculatedPoints.values.first().toLocation(world)
 
     fun play(players: List<Player>) {
         if (players.isEmpty()) throw IllegalArgumentException("Players can't be empty")
