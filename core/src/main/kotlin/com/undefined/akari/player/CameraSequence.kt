@@ -65,62 +65,20 @@ class CameraSequence {
 
     fun firstLocation(world: World): Location = pathMap.firstEntry().value.calculatedPoints.values.first().toLocation(world)
 
-    fun play(players: List<Player>) {
-        if (players.isEmpty()) throw IllegalArgumentException("Players can't be empty")
-        if (pathMap.isEmpty()) throw IllegalArgumentException("Camera path can't be empty")
-
-        val finalPathMap = pathMap.values.flatMap { it.calculatedPoints.values }
-
-        val startLoc = pathMap.firstEntry().value.calculatedPoints.values.first().toLocation(world)
-
-        val entity = camera.spawn(world, startLoc, players)
-        camera.setInterpolationDuration(entity, 1, players)
-        camera.setCamera(entity, players)
-
-        object : BukkitRunnable() {
-            var index = 0
-
-            init {
-                var past: Location? = null
-
-                println(pathMap.size)
-
-                pathMap.forEach {
-                    val material = LineUtil.randomMaterial()
-                    for (point in it.value.calculatedPoints.values) {
-                        if (past == null) {
-                            past = point.toLocation(world)
-                            continue
-                        }
-                        val newLoc = point.toLocation(world)
-//                        LineUtil.createLine(past, newLoc, material)
-                        past = newLoc
-                    }
+    fun spawnDisplayLine(world: World) {
+        var past: Location? = null
+        pathMap.forEach {
+            val material = LineUtil.randomMaterial()
+            for (point in it.value.calculatedPoints.values) {
+                if (past == null) {
+                    past = point.toLocation(world)
+                    continue
                 }
+                val newLoc = point.toLocation(world)
+                        LineUtil.createLine(past, newLoc, material)
+                past = newLoc
             }
-
-            override fun run() {
-                if (index >= finalPathMap.size) {
-                    cancel()
-                    return
-                }
-                val point: CameraPoint? = finalPathMap[index]
-                if (point == null) {
-                    camera.removeCamera(players)
-                    throw RuntimeException("Next point not found.")
-                }
-                camera.teleport(entity, point.toLocation(world), players)
-                index++
-            }
-
-            override fun cancel() {
-                super.cancel()
-                camera.removeCamera(players)
-                camera.kill(entity, players)
-            }
-        }.runTaskTimer(AkariConfig.javaPlugin, 1, 1)
+        }
     }
-
-    fun play(player: Player) = play(listOf(player))
 
 }

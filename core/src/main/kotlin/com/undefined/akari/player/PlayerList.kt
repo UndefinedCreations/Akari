@@ -1,29 +1,41 @@
 package com.undefined.akari.player
 
 import com.undefined.akari.entity.NMSCamera
+import com.undefined.akari.manager.GamemodeManager
+import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import kotlin.reflect.KProperty
 
 class PlayerList(private val cameraPlayer: CameraPlayer, private var state: MutableList<Player>) : MutableList<Player> by state {
 
     override fun add(element: Player): Boolean {
-        if (isNMS()) sendPlayerClient(element)
+        setAndSaveGameMode(element)
+        if (isNMS()) sendPlayerClient(element) else setPlayerBukkit(element)
         return state.add(element)
     }
 
     override fun addAll(elements: Collection<Player>): Boolean {
-        if (isNMS()) elements.forEach { sendPlayerClient(it) }
+        elements.forEach { setAndSaveGameMode(it) }
+        if (isNMS()) elements.forEach { sendPlayerClient(it) } else elements.forEach { setPlayerBukkit(it) }
         return state.addAll(elements)
     }
 
     override fun remove(element: Player): Boolean {
-        if (isNMS()) removePlayer(element)
+        resetGameMode(element)
+        if (isNMS()) removePlayerClient(element) else cameraPlayer.camera.removeCamera(listOf(element))
         return state.remove(element)
     }
 
     override fun removeAll(elements: Collection<Player>): Boolean {
-        if (isNMS()) elements.forEach { removePlayer(it) }
+        elements.forEach { resetGameMode(it) }
+        if (isNMS()) elements.forEach { removePlayerClient(it) } else cameraPlayer.camera.removeCamera(elements.toList())
         return state.removeAll(elements)
+    }
+
+    override fun clear() {
+        state.forEach { resetGameMode(it) }
+        if (isNMS()) state.forEach { removePlayerClient(it) } else cameraPlayer.camera.removeCamera(state)
+        state.clear()
     }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): PlayerList = this
@@ -31,13 +43,30 @@ class PlayerList(private val cameraPlayer: CameraPlayer, private var state: Muta
         state = value
     }
 
-    private fun removePlayer(player: Player) {
+    private fun resetGameMode(player: Player) {
+        if (cameraPlayer.exitGameMode == null) GamemodeManager.pastGameMode[player.uniqueId]?.run { player.gameMode = this } else player.gameMode = cameraPlayer.exitGameMode!!
+        GamemodeManager.pastGameMode.remove(player.uniqueId)
+    }
+
+    private fun setAndSaveGameMode(player: Player) {
+        GamemodeManager.pastGameMode[player.uniqueId] = player.gameMode
+        player.gameMode = GameMode.SPECTATOR
+    }
+
+    private fun removePlayerClient(player: Player) {
         cameraPlayer.camera.removeCamera(listOf(player))
         cameraPlayer.camera.kill(cameraPlayer.cameraEntity!!.entity, listOf(player))
     }
 
     private fun sendPlayerClient(player: Player) {
+
         cameraPlayer.camera.spawnForClient(cameraPlayer.cameraEntity!!.entity, cameraPlayer.cameraEntity?.serverEntity, player)
+        cameraPlayer.camera.setCamera(cameraPlayer.cameraEntity!!.entity, listOf(player))
+    }
+
+
+    private fun setPlayerBukkit(player: Player) {
+        if (cameraPlayer.cameraEntity == null) return
         cameraPlayer.camera.setCamera(cameraPlayer.cameraEntity!!.entity, listOf(player))
     }
 

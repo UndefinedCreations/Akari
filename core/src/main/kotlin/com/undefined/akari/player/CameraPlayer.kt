@@ -6,6 +6,7 @@ import com.undefined.akari.AkariConfig
 import com.undefined.akari.entity.BukkitCamera
 import com.undefined.akari.entity.Camera
 import com.undefined.akari.entity.NMSCamera
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -28,10 +29,16 @@ class CameraPlayer(
     var camera: Camera = NMSCamera
     private var bukkitTask: BukkitTask? = null
 
+    var exitGameMode: GameMode? = null
+
     var tickRate: Int = 20
         set(value) {
             if (value > 0 ) field = value
         }
+
+    fun setExitGameMode(gameMode: GameMode?) = apply {
+        this.exitGameMode = gameMode
+    }
 
     fun setTickRate(tickRate: Int) = apply {
         if (tickRate > 0) this.tickRate = tickRate
@@ -63,14 +70,18 @@ class CameraPlayer(
 
     fun start(player: Player) = start(listOf(player))
 
-    fun start(player: List<Player>, playingWorld: World? = null) = apply {
+    fun start(players: List<Player>, playingWorld: World? = null) = apply {
         if(cameraSequence == null) throw IllegalArgumentException("No CameraSequence set")
 
-        val playingWorld = playingWorld ?: this.playingWorld
-        this.cameraEntity = camera.spawn(playingWorld, cameraSequence!!.firstLocation(playingWorld), players)
-        this.players.addAll(players)
+        val rate = floor(tickRate / 20.0)
 
-        startPlayingLoop(playingWorld)
+        val playingWorld = playingWorld ?: this.playingWorld
+
+        this.players.addAll(players)
+        this.cameraEntity = camera.spawn(playingWorld, cameraSequence!!.firstLocation(playingWorld), players)
+        camera.setInterpolationDuration(cameraEntity!!.entity, rate.toInt(), players)
+        camera.setCamera(cameraEntity!!.entity, players)
+        startPlayingLoop(playingWorld, rate.toInt())
 
         this.active = true
     }
@@ -80,20 +91,23 @@ class CameraPlayer(
         cancelTask()
     }
 
-    private fun startPlayingLoop(playingWorld: World) {
+    private fun startPlayingLoop(playingWorld: World, tickRate: Int) {
 
-        val rate = floor(tickRate / 20.0)
         val path = cameraSequence!!.pathMap.values.flatMap { it.calculatedPoints.values }
         var index = 0
 
-        object : BukkitRunnable() {
+        bukkitTask = object : BukkitRunnable() {
             override fun run() {
-                if (index >= path.size && !looping) stop() else if (index >= path.size) index = 0
+                println("$index + ${path.size}")
+                if (index >= path.size && !looping) {
+                    stop()
+                    return
+                } else if (index >= path.size) index = 0
                 val nextCameraPoint = path[index]
                 camera.teleport(cameraEntity!!.entity, nextCameraPoint.toLocation(playingWorld), players)
                 index++
             }
-        }.runTaskTimer(AkariConfig.javaPlugin, 0, rate.toLong())
+        }.runTaskTimer(AkariConfig.javaPlugin, 0, tickRate.toLong())
     }
 
     private fun cancelTask() {

@@ -2,8 +2,9 @@ package com.undefined.akari
 
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.camaraPath.CameraPath
-import com.undefined.akari.camaraPath.CameraPoint
-import com.undefined.akari.camaraPath.toCamaraPoint
+import com.undefined.akari.camaraPath.toCameraPoint
+import com.undefined.akari.player.CameraPlayer
+import com.undefined.akari.player.CameraSequence
 import com.undefined.lynx.logger.sendWarn
 import com.undefined.stellar.StellarCommand
 import org.bukkit.command.CommandSender
@@ -20,8 +21,7 @@ object TestCommand {
                 val player = sender as? Player ?: return@addExecution sendWarn("<red>Only players can use this command.")
                 player.sendMessage("Test command executed.")
 
-                CameraSequence(player.world)
-                    .setBukkitCamera(false)
+                val camSeq = CameraSequence()
                     .addCameraPath(
                         CameraPath()
                             .setAlgorithm(AlgorithmType.BSPLINE)
@@ -36,7 +36,10 @@ object TestCommand {
                             .calculatePoints(),
                         100
                     )
-                    .play(player)
+
+                CameraPlayer(player.world)
+                    .setCameraSequence(camSeq)
+                    .start(player)
 
                 player.sendMessage("Camera path calculated.")
            }
