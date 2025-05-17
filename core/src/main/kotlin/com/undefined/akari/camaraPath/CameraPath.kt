@@ -13,11 +13,7 @@ class CameraPath(
     init {
         kotlinDSL(this)
     }
-
-    override val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
     var algorithm: Algorithm = AlgorithmType.SMOOTHSTEP.klass
-
-
 
     fun setAlgorithm(algorithmType: AlgorithmType) = apply {
         this.algorithm = algorithmType.klass
@@ -33,7 +29,6 @@ class CameraPath(
             .addPosition(localCameraPoint!!.position)
             .setYaw(localCameraPoint!!.yaw)
             .setPitch(localCameraPoint!!.pitch)
-        kotlinDSL(cameraPoint)
     }
 
     fun addCamaraPoint(
@@ -45,7 +40,7 @@ class CameraPath(
         time: Int = 20,
         kotlinDSL: CameraPoint.() -> Unit = {}
     ) = apply {
-        addCamaraPoint(CameraPoint(x, y, z, yaw, pitch), time, kotlinDSL)
+        addCamaraPoint(CameraPoint(x, y, z, yaw, pitch, kotlinDSL), time)
     }
 
     override fun calculatePoints(

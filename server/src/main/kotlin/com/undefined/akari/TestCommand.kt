@@ -24,6 +24,9 @@ object TestCommand {
 
                 val calPath = CameraPath {
                     addCamaraPoint(
+                        x = 10.0
+                    )
+                    addCamaraPoint(
                         x = 0.5
                     )
                 }.calculatePoints()
@@ -37,6 +40,8 @@ object TestCommand {
                             )
                         }
                     )
+
+                    start(player)
                 }
 
                 player.sendMessage("Camera path calculated.")

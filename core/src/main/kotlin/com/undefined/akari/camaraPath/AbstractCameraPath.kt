@@ -6,7 +6,7 @@ import com.undefined.akari.camaraPath.point.CameraPoint
 
 abstract class AbstractCameraPath<T> {
 
-    abstract val pointMap: HashMap<Int, CameraPoint>
+    val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
 
     var localCameraPoint: CameraPoint? = null
 

@@ -2,6 +2,7 @@ package com.undefined.akari.camaraPath.point
 
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.entity.Entity
 import org.bukkit.util.Vector
 import kotlin.math.acos
 import kotlin.math.atan2
@@ -26,6 +27,10 @@ abstract class AbstractControlPoint<T>(
     fun lookAt(location: Location): T = apply {
         setYaw(180 - (Math.toDegrees(atan2(location.x, location.z))).toFloat())
         setPitch(90 - (Math.toDegrees(acos(location.y))).toFloat())
+    } as T
+
+    fun lookAt(entity: Entity): T = apply {
+        lookAt(entity.location)
     } as T
 
     fun addYaw(amount: Float): T = apply {

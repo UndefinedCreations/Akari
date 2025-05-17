@@ -14,8 +14,6 @@ class OrbitalPath (
     private var center: Location, var radius: Float = 5.0f, var height: Double, var time: Int = 60
 ): AbstractCameraPath<OrbitalPath>() {
 
-    override val pointMap: HashMap<Int, CameraPoint> = hashMapOf()
-
     fun setCenter(center: Location) = apply {
         this.center = center
     }
