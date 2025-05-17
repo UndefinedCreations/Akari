@@ -2,6 +2,7 @@ package com.undefined.akari.player
 
 import com.undefined.akari.entity.NMSCamera
 import com.undefined.akari.manager.GamemodeManager
+import com.undefined.akari.manager.NMSManager
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import kotlin.reflect.KProperty
@@ -59,7 +60,7 @@ class PlayerList(private val cameraPlayer: CameraPlayer, private var state: Muta
     }
 
     private fun sendPlayerClient(player: Player) {
-
+        cameraPlayer.camera.setInterpolationDuration(cameraPlayer.cameraEntity!!.entity, 1, listOf(player))
         cameraPlayer.camera.spawnForClient(cameraPlayer.cameraEntity!!.entity, cameraPlayer.cameraEntity?.serverEntity, player)
         cameraPlayer.camera.setCamera(cameraPlayer.cameraEntity!!.entity, listOf(player))
     }

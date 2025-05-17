@@ -40,8 +40,8 @@ object TestCommand {
                             )
                         }
                     )
-
-                    start(player)
+                    start()
+                    addPlayer(player)
                 }
 
                 player.sendMessage("Camera path calculated.")
