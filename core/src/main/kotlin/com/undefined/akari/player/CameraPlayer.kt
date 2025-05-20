@@ -86,6 +86,10 @@ class CameraPlayer(
         this.players.add(player)
     }
 
+    fun isActive (): Boolean {
+        return active
+    }
+
     fun addPlayers(players: List<Player>) = apply {
         players.forEach { addPlayer(it) }
     }
