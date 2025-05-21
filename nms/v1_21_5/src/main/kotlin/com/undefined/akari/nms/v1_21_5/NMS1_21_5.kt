@@ -11,11 +11,14 @@ import net.minecraft.network.protocol.game.ClientboundSetCameraPacket
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket
 import net.minecraft.network.syncher.EntityDataAccessor
+import net.minecraft.network.syncher.EntityDataSerializer
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerEntity
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Display
+import net.minecraft.world.entity.Display.ItemDisplay
+import net.minecraft.world.entity.Display.TextDisplay
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.PositionMoveRotation
@@ -24,6 +27,8 @@ import org.bukkit.World
 import org.bukkit.craftbukkit.v1_21_R4.CraftWorld
 import org.bukkit.craftbukkit.v1_21_R4.entity.CraftPlayer
 import org.bukkit.entity.Player
+import org.bukkit.util.Vector
+import org.joml.Vector3f
 
 object NMS_1_21_5 : NMS {
 
@@ -33,6 +38,68 @@ object NMS_1_21_5 : NMS {
 
     override fun createItemDisplay(world: World): Any =
         Display.ItemDisplay(EntityType.ITEM_DISPLAY, (world as CraftWorld).handle)
+
+
+    override fun createTextDisplay(world: World): Any =
+        TextDisplay(EntityType.TEXT_DISPLAY, (world as CraftWorld).handle)
+
+    override fun setTextTextDisplay(display: Any, text: String, players: List<Player>) {
+        val textDisplay = display as? TextDisplay ?: return
+        val dataList = mutableListOf(SynchedEntityData.DataValue.create(EntityDataAccessor(23, EntityDataSerializers.STRING), text))
+        players.sendPackets(ClientboundSetEntityDataPacket(textDisplay.id, dataList as List<SynchedEntityData.DataValue<*>>))
+    }
+
+    override fun setScale(display: Any, scale: Vector, players: List<Player>) {
+        val display = display as? Display ?: return
+        sendMetaData(
+            display.id,
+            12,
+            EntityDataSerializers.VECTOR3,
+            Vector3f(
+                scale.x.toFloat(),
+                scale.y.toFloat(),
+                scale.z.toFloat()
+            ), players
+        )
+    }
+
+    override fun setTransformation(display: Any, vector: Vector, players: List<Player>) {
+        val display = display as? Display ?: return
+        sendMetaData(
+            display.id,
+            11,
+            EntityDataSerializers.VECTOR3,
+            Vector3f(
+                vector.x.toFloat(),
+                vector.y.toFloat(),
+                vector.z.toFloat()
+            ),
+            players
+            )
+    }
+
+    override fun setTransformationInterpolationDuration(
+        display: Any,
+        interpolationDuration: Int,
+        players: List<Player>
+    ) {
+        val display = display as? Display ?: return
+        sendMetaData(
+            display.id,
+            9,
+            EntityDataSerializers.INT,
+            interpolationDuration,
+            players
+        )
+    }
+
+    override fun addPassenger(camera: Any, display: Any, players: List<Player>) {
+        val camera = camera as? ItemDisplay ?: return
+        val display = display as? Display ?: return
+
+        camera.passengers
+
+    }
 
     override fun setEntityLocation(entity: Any, location: Location) {
         val entity = entity as? Display.ItemDisplay ?: return
@@ -77,13 +144,17 @@ object NMS_1_21_5 : NMS {
 
     override fun setInterpolationDuration(entity: Any, interpolationDuration: Int, players: List<Player>) {
         val entity = entity as? Display.ItemDisplay ?: return
-        val dataList = mutableListOf(SynchedEntityData.DataValue.create(EntityDataAccessor(10, EntityDataSerializers.INT), interpolationDuration))
-        players.sendPackets(ClientboundSetEntityDataPacket(entity.id, dataList as List<SynchedEntityData.DataValue<*>>))
+        sendMetaData(entity.id, 10, EntityDataSerializers.INT, interpolationDuration, players)
     }
 
     override fun sendTeleportPacket(entity: Any, players: List<Player>) {
         val entity = entity as? Display.ItemDisplay ?: return
         players.sendPackets(ClientboundTeleportEntityPacket(entity.id, PositionMoveRotation.of(entity), setOf(), false))
+    }
+
+    private fun <T> sendMetaData(entityId: Int, accessorId: Int, entityDataSerializers: EntityDataSerializer<T>, data: T, players: List<Player>) {
+        val dataList = mutableListOf(SynchedEntityData.DataValue.create(EntityDataAccessor(accessorId, entityDataSerializers), data))
+        players.sendPackets(ClientboundSetEntityDataPacket(entityId, dataList as List<SynchedEntityData.DataValue<*>>))
     }
 
     private fun Player.serverPlayer(): ServerPlayer = (this as CraftPlayer).handle
