@@ -10,8 +10,11 @@ import org.bukkit.util.Vector
 import kotlin.math.cos
 import kotlin.math.sin
 
-class OrbitalPath (
-    private var center: Location, var radius: Float = 5.0f, var height: Double, var time: Int = 60
+class OrbitalPath(
+    private var center: Location,
+    var height: Double,
+    var radius: Float = 5.0f,
+    var time: Int = 60
 ): AbstractCameraPath<OrbitalPath>() {
 
     fun setCenter(center: Location) = apply {

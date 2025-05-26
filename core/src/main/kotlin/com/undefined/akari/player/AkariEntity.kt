@@ -1,6 +1,6 @@
 package com.undefined.akari.player
 
-data class CameraEntity(
+data class AkariEntity(
     val entity: Any,
     val serverEntity: Any?
 )

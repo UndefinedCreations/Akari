@@ -2,7 +2,9 @@ package com.undefined.akari.nms
 
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.entity.Display
 import org.bukkit.entity.Player
+import org.bukkit.entity.TextDisplay
 import org.bukkit.util.Vector
 
 interface NMS {
@@ -12,9 +14,13 @@ interface NMS {
 
     fun setTextTextDisplay(display: Any, text: String, players: List<Player>)
 
+    fun setTextAlignment(display: Any, alignment: TextDisplay.TextAlignment, players: List<Player>)
+
     fun setScale(display: Any, scale: Vector, players: List<Player>)
 
     fun setTransformation(display: Any, vector: Vector, players: List<Player>)
+
+    fun setBillboard(display: Any, billboard: Display.Billboard, players: List<Player>)
 
     fun setTransformationInterpolationDuration(display: Any, interpolationDuration: Int, players: List<Player>)
 

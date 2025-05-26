@@ -1,6 +1,6 @@
 package com.undefined.akari.entity
 
-import com.undefined.akari.player.CameraEntity
+import com.undefined.akari.player.AkariEntity
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.World
@@ -18,8 +18,8 @@ object BukkitCamera : Camera {
         world: World,
         location: Location,
         players: List<Player>
-    ): CameraEntity {
-        return CameraEntity(world.spawn(location, ItemDisplay::class.java), null)
+    ): AkariEntity {
+        return AkariEntity(world.spawn(location, ItemDisplay::class.java), null)
     }
 
     override fun setInterpolationDuration(

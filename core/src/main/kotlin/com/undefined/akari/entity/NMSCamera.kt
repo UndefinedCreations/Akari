@@ -1,9 +1,7 @@
 package com.undefined.akari.entity
 
-import com.undefined.akari.AkariConfig
 import com.undefined.akari.manager.NMSManager
-import com.undefined.akari.player.CameraEntity
-import org.bukkit.Bukkit
+import com.undefined.akari.player.AkariEntity
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -19,12 +17,12 @@ object NMSCamera : Camera {
         NMSManager.nms.sendSpawnPacket(entity, serverEntity, listOf(player))
     }
 
-    override fun spawn(world: World, location: Location, players: List<Player>): CameraEntity {
+    override fun spawn(world: World, location: Location, players: List<Player>): AkariEntity {
         val entity = createEntity(world)
         NMSManager.nms.setEntityLocation(entity, location)
         val serverEntity = createServerEntity(entity, world)
         players.forEach { spawnForClient(entity, serverEntity, it) }
-        return CameraEntity(entity, serverEntity)
+        return AkariEntity(entity, serverEntity)
     }
 
     override fun setInterpolationDuration(

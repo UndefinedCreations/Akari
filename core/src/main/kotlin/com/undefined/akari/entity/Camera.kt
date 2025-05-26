@@ -1,11 +1,9 @@
 package com.undefined.akari.entity
 
-import com.undefined.akari.player.CameraEntity
+import com.undefined.akari.player.AkariEntity
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
-import kotlin.time.Duration
 
 interface Camera {
 
@@ -15,7 +13,7 @@ interface Camera {
 
     fun spawnForClient(entity: Any, serverEntity: Any? , player: Player)
 
-    fun spawn(world: World, location: Location, players: List<Player>): CameraEntity
+    fun spawn(world: World, location: Location, players: List<Player>): AkariEntity
 
     fun setInterpolationDuration(entity: Any, duration: Int, players: List<Player>)
 
