@@ -90,7 +90,7 @@ object NMS_1_21_7 : NMS {
 
     private fun Player.sendPackets(vararg packets: Packet<*>?) {
         val connection = serverPlayer().connection
-        packets.filterNotNull().forEach { connection.sendPacket(it) }
+        packets.filterNotNull().forEach { connection.send(it) }
     }
 
     private fun Collection<Player>.sendPackets(vararg packet: Packet<*>?) {

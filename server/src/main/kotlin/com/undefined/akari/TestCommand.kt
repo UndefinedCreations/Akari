@@ -15,28 +15,25 @@ import org.bukkit.util.Vector
 object TestCommand {
 
     fun register () {
-        val main = StellarCommand("test")
+        val main = StellarCommand("fly")
             .setDescription("Test command")
             .addExecution<Player> {
                 val player = sender
                 player.sendMessage("Test command executed.")
 
-                val calPath = CameraPath {
-                    addCamaraPoint(
-                        x = 10.0
-                    )
-                    addCamaraPoint(
-                        x = 0.5
-                    )
-                }.calculatePoints()
-
                 CameraPlayer(player.world) {
 
                     setCameraSequence(
                         CameraSequence {
-                            addCameraPath(
-                               calPath.clone().addPosition(player)
-                            )
+                            addCameraPath(CameraPath {
+                                addCamaraPoint(
+                                    player.eyeLocation.toCameraPoint().addPosition(Vector(0,0,0)), 80
+                                )
+                                addCamaraPoint(
+                                    player.eyeLocation.toCameraPoint().addPosition(Vector(0,15,0)).setPitch(-90f), 80
+                                )
+                                setAlgorithm(AlgorithmType.LERP)
+                            }.calculatePoints())
                         }
                     )
                     start()

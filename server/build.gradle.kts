@@ -1,3 +1,4 @@
+import com.undefinedcreations.nova.ServerType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -39,6 +40,7 @@ tasks {
         options.release = 21
     }
     runServer {
+        serverType(ServerType.PAPERMC)
         minecraftVersion("1.21.7")
         acceptMojangEula()
     }
