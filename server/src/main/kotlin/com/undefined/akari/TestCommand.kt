@@ -16,10 +16,9 @@ object TestCommand {
 
     fun register () {
         val main = StellarCommand("test")
-            .addAlias("t")
             .setDescription("Test command")
-            .addExecution<CommandSender> {
-                val player = sender as? Player ?: return@addExecution sendWarn("<red>Only players can use this command.")
+            .addExecution<Player> {
+                val player = sender
                 player.sendMessage("Test command executed.")
 
                 val calPath = CameraPath {

@@ -12,6 +12,5 @@ class Main : JavaPlugin() {
         StellarConfig.setPlugin(this)
 
         TestCommand.register()
-
     }
 }

@@ -16,13 +16,14 @@ repositories {
 dependencies {
     compileOnly(libs.spigot)
 
-    implementation("com.undefined:stellar:1.0.0")
-    implementation("com.undefined:lynx:0.0.21")
+    implementation("com.undefined:stellar:1.0.3")
+    implementation("com.undefined:lynx:0.0.25")
 //    implementation("com.undefined:akari:0.0.2")
 
     implementation(project(":common"))
     implementation(project(":core"))
     implementation(project(":nms:v1_21_5"))
+    implementation(project(":nms:v1_21_7"))
 
     implementation("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
@@ -38,7 +39,7 @@ tasks {
         options.release = 21
     }
     runServer {
-        minecraftVersion("1.21.5")
+        minecraftVersion("1.21.7")
         acceptMojangEula()
     }
 }

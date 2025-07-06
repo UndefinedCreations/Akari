@@ -27,7 +27,7 @@ class CalculatedPath(
     fun addPosition(
         player: Player
     ) = apply {
-        addPosition(player.location.toVector())
+        addPosition(player.eyeLocation.toVector())
     }
 
 }
