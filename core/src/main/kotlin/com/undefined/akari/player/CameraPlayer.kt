@@ -24,7 +24,7 @@ class CameraPlayer(
     kotlinDSL: CameraPlayer.() -> Unit = {}
 ) {
 
-    var cameraSequence: CameraSequence? = null
+    private var cameraSequence: CameraSequence? = null
     var looping: Boolean = false
 
     val players: PlayerList by PlayerList(this, mutableSetOf())
