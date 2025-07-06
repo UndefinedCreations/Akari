@@ -14,6 +14,7 @@ dependencies {
     api(project(":core"))
     api(project(":common"))
     api(project(":nms:v1_21_5"))
+    api(project(":nms:v1_21_7"))
 
     dokkaPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:2.0.0")
 }
