@@ -7,7 +7,7 @@ Advance your Spigot experience furthur with Akari, the advanced camera framework
 ## Installation
 
 > [!WARNING]  
-> Akari is still in early development, except bugs
+> Akari is still in early development, expect bugs
 
 ### Gradle
 
