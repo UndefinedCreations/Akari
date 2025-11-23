@@ -14,7 +14,7 @@ Advance your Spigot experience furthur with Akari, the advanced camera framework
 ```gradle
 maven {
     name = "undefined-repo"
-    url = "https://repo.undefinecreations.com/releases"
+    url = "https://repo.undefinedcreations.com/releases"
 }
 ```
 ```gradle
