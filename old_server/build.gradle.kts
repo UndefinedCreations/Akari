@@ -21,8 +21,8 @@ repositories {
 dependencies {
     compileOnly(libs.spigot)
 
-//    implementation("com.undefined:stellar:1.1.3")
-//    implementation("com.undefined:lynx:1.1.10-SNAPSHOT")
+    implementation("com.undefined:stellar:1.1.3")
+    implementation("com.undefined:lynx:1.1.10-SNAPSHOT")
 //    implementation("com.undefined:akari:0.0.2")
 
     implementation(project(":common"))
@@ -47,13 +47,8 @@ tasks {
     }
     runServer {
         serverType(ServerType.PAPERMC)
-        minecraftVersion("1.21.8")
+        minecraftVersion("26_1_2")
         acceptMojangEula()
-    }
-}
-tasks.processResources {
-    filesMatching("plugin.yml") {
-        expand("version" to project.version)
     }
 }
 

@@ -2,3 +2,12 @@ name: Akari
 version: '${version}'
 main: com.undefined.akari.Main
 api-version: '1.21'
+
+commands:
+  fly:
+    description: Toggle flight mode
+    permission: akari.fly
+permissions:
+  akari.fly:
+    description: Allows toggling flight
+    default: op
