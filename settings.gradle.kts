@@ -4,5 +4,6 @@ include(
     ":core",
     ":server",
     ":nms:v1_21_5",
-    ":nms:v1_21_7"
+    ":nms:v1_21_7",
+    ":nms:v1_21_8",
 )

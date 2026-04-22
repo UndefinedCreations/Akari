@@ -4,6 +4,7 @@ import com.undefined.akari.nms.NMS
 import com.undefined.akari.exception.UnsupportedVersionException
 import com.undefined.akari.nms.v1_21_5.NMS_1_21_5
 import com.undefined.akari.nms.v1_21_7.NMS_1_21_7
+import com.undefined.akari.nms.v1_21_8.NMS_1_21_8
 import org.bukkit.Bukkit
 
 object NMSManager {
@@ -13,6 +14,7 @@ object NMSManager {
     private val versions: Map<String, () -> NMS> = mapOf(
         "1.21.5" to { NMS_1_21_5 },
         "1.21.7" to { NMS_1_21_7 },
+        "1.21.8" to { NMS_1_21_8 },
     )
 
 }

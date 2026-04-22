@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("setup")
-    id("com.undefinedcreations.nova") version "0.0.5"
+    id("com.undefinedcreations.nova") version "0.0.10"
     id("com.gradleup.shadow")
 }
 
@@ -12,19 +12,24 @@ repositories {
         name = "undefined-repo"
         url = uri("https://repo.undefinedcreations.com/releases")
     }
+    maven {
+        name = "undefined-snapshots"
+        url = uri("https://repo.undefinedcreations.com/snapshots")
+    }
 }
 
 dependencies {
     compileOnly(libs.spigot)
 
-    implementation("com.undefined:stellar:1.0.3")
-    implementation("com.undefined:lynx:0.0.25")
+    implementation("com.undefined:stellar:1.1.3")
+    implementation("com.undefined:lynx:1.1.10-SNAPSHOT")
 //    implementation("com.undefined:akari:0.0.2")
 
     implementation(project(":common"))
     implementation(project(":core"))
     implementation(project(":nms:v1_21_5"))
     implementation(project(":nms:v1_21_7"))
+    implementation(project(":nms:v1_21_8"))
 
     implementation("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
@@ -41,7 +46,7 @@ tasks {
     }
     runServer {
         serverType(ServerType.PAPERMC)
-        minecraftVersion("1.21.7")
+        minecraftVersion("1.21.8")
         acceptMojangEula()
     }
 }
