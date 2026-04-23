@@ -42,8 +42,12 @@ class FlyToCommand : CommandExecutor {
                         from.toCameraPoint()
                     )
                     addCamaraPoint(to.toCameraPoint(), 30)
-                    addCamaraPoint(to.toCameraPoint().addPosition(Vector(15, 15, 15)), 30)
+                    addCamaraPoint(to.toCameraPoint().addPosition(Vector(15, 15, 35)), 30)
                     addCamaraPoint(to.toCameraPoint().addPosition(Vector(35, 15, 45)), 30)
+                    addCamaraPoint(to.toCameraPoint().addPosition(Vector(12, 5, 25)), 30)
+                    addCamaraPoint(to.toCameraPoint().addPosition(Vector(32, 55, 75)), 30)
+                    addCamaraPoint(to.toCameraPoint(), 50)
+                    addCamaraPoint(from.toCameraPoint(), 30)
                 }
                     .setAlgorithm(AlgorithmType.BSPLINE)
                     .calculatePoints()
