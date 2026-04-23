@@ -2,6 +2,7 @@
 
 package com.undefined.akari.nms.v1_21_8
 
+import com.mojang.math.Transformation
 import com.undefined.akari.nms.NMS
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
@@ -21,9 +22,14 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.PositionMoveRotation
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.block.data.BlockData
 import org.bukkit.craftbukkit.v1_21_R5.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_21_R5.CraftWorld
+import org.bukkit.craftbukkit.v1_21_R5.block.data.CraftBlockData
+import org.bukkit.craftbukkit.v1_21_R5.inventory.CraftItemStack
 import org.bukkit.entity.Player
+import org.joml.Quaternionf
+import org.joml.Vector3f
 
 object NMS_1_21_8 : NMS {
 
@@ -31,11 +37,35 @@ object NMS_1_21_8 : NMS {
         const val SET_ROTATION = "b"
     }
 
+    override fun setItemDisplayItem(entity: Any, itemStack: org.bukkit.inventory.ItemStack) {
+        val entity = entity as? Display.ItemDisplay ?: return
+        entity.itemStack = CraftItemStack.asNMSCopy(itemStack)
+    }
+
+    override fun sendEntityData(entity: Any, players: List<Player>) {
+        val entity = entity as? Display ?: return
+        val data = entity.entityData.nonDefaultValues ?: return
+        players.sendPackets(ClientboundSetEntityDataPacket(entity.id, data))
+    }
+
+    override fun setTransformation(entity: Any, translation: Vector3f, leftRotation: Quaternionf, scale: Vector3f, rightRotation: Quaternionf) {
+        val entity = entity as? Display ?: return
+        entity.setTransformation(Transformation(translation, leftRotation, scale, rightRotation))
+    }
+
+    override fun createBlockDisplay(world: World): Any =
+        Display.BlockDisplay(EntityType.BLOCK_DISPLAY, (world as CraftWorld).handle)
+
+    override fun setBlockDisplayBlock(entity: Any, blockData: BlockData) {
+        val entity = entity as? Display.BlockDisplay ?: return
+        entity.blockState = (blockData as CraftBlockData).state
+    }
+
     override fun createItemDisplay(world: World): Any =
         Display.ItemDisplay(EntityType.ITEM_DISPLAY, (world as CraftWorld).handle)
 
     override fun setEntityLocation(entity: Any, location: Location) {
-        val entity = entity as? Display.ItemDisplay ?: return
+        val entity = entity as? Display ?: return
         entity.setPos(location.x, location.y, location.z)
 
         Entity::class.java.getDeclaredMethod(Mapping.SET_ROTATION, Float::class.java, Float::class.java).apply {
@@ -43,10 +73,10 @@ object NMS_1_21_8 : NMS {
         }(entity, location.yaw, location.pitch)
     }
 
-    override fun createServerEntity(entity: Any, world: World): Any =
+    override fun createServerEntity(entity: Any, world: World, ): Any =
         ServerEntity(
             (world as CraftWorld).handle,
-            entity as Display.ItemDisplay,
+            entity as Display,
             0,
             false,
             {},
@@ -55,12 +85,12 @@ object NMS_1_21_8 : NMS {
         )
 
     override fun sendSpawnPacket(entity: Any, serverEntity: Any?, players: List<Player>) {
-        val entity = entity as? Display.ItemDisplay ?: return
+        val entity = entity as? Display ?: return
         players.sendPackets(ClientboundAddEntityPacket(entity, (serverEntity as ServerEntity)))
     }
 
     override fun sendRemoveEntityPacket(entity: Any, players: List<Player>) {
-        val entity = entity as? Display.ItemDisplay ?: return
+        val entity = entity as? Display ?: return
         players.sendPackets(ClientboundRemoveEntitiesPacket(entity.id))
     }
 
@@ -82,7 +112,7 @@ object NMS_1_21_8 : NMS {
     }
 
     override fun sendTeleportPacket(entity: Any, players: List<Player>) {
-        val entity = entity as? Display.ItemDisplay ?: return
+        val entity = entity as? Display ?: return
         players.sendPackets(ClientboundTeleportEntityPacket(entity.id, PositionMoveRotation.of(entity), setOf(), false))
     }
 

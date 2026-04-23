@@ -2,7 +2,6 @@ package com.undefined.akari.player
 
 import com.undefined.akari.entity.NMSCamera
 import com.undefined.akari.manager.GamemodeManager
-import com.undefined.akari.manager.NMSManager
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import kotlin.reflect.KProperty

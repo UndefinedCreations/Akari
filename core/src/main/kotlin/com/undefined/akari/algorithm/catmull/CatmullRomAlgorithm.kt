@@ -1,6 +1,7 @@
 package com.undefined.akari.algorithm.catmull
 
 import com.undefined.akari.algorithm.Algorithm
+import com.undefined.akari.algorithm.AngleUtil.unwrapAngle
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.point.CameraPoint
 import org.bukkit.util.Vector
@@ -63,6 +64,11 @@ object CatmullRomAlgorithm: Algorithm {
             val p2 = extendedPoints[i + 1]
             val p3 = extendedPoints[i + 2]
 
+            val y0 = p0.yaw
+            val y1 = unwrapAngle(y0, p1.yaw)
+            val y2 = unwrapAngle(y1, p2.yaw)
+            val y3 = unwrapAngle(y2, p3.yaw)
+
             val startTick = extendedTicks[i]
             val endTick = extendedTicks[i + 1]
             val tickRange = endTick - startTick
@@ -70,6 +76,7 @@ object CatmullRomAlgorithm: Algorithm {
             for (j in 0 until tickRange) {
                 val t = j.toFloat() / tickRange
                 val interpolatedPoint: CameraPoint = catmullInterpolate(p0, p1, p2, p3, t)
+                interpolatedPoint.yaw = catmullInterpolate(y0, y1, y2, y3, t)
                 calculated[startTick + j] = interpolatedPoint
             }
         }

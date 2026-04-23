@@ -30,7 +30,7 @@ class FlyCommand : CommandExecutor {
                         ).calculatePoints()
                     )
                 }
-                seq.spawnDisplayLine(sender.world)
+                seq.spawnDisplayLine(mutableSetOf<Player>(sender), sender.world)
 
         CameraPlayer(sender.world) {
             setCameraSequence(seq).setBukkitCamera(false)

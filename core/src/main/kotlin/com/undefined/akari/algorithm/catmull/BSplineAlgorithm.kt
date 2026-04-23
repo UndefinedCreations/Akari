@@ -1,6 +1,8 @@
 package com.undefined.akari.algorithm.catmull
 
 import com.undefined.akari.algorithm.Algorithm
+import com.undefined.akari.algorithm.AngleUtil
+import com.undefined.akari.algorithm.AngleUtil.unwrapAngle
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.point.CameraPoint
 import org.bukkit.util.Vector
@@ -62,6 +64,11 @@ object BSplineAlgorithm: Algorithm {
             val p2 = extendedPoints[i + 2]
             val p3 = extendedPoints[i + 3]
 
+            val y0 = p0.yaw
+            val y1 = unwrapAngle(y0, p1.yaw)
+            val y2 = unwrapAngle(y1, p2.yaw)
+            val y3 = unwrapAngle(y2, p3.yaw)
+
             val startTick = extendedTicks[i + 1]
             val endTick = extendedTicks[i + 2]
             val tickRange = endTick - startTick
@@ -69,6 +76,7 @@ object BSplineAlgorithm: Algorithm {
             for (j in 0 until tickRange) {
                 val t = j.toFloat() / tickRange
                 val interpolatedPoint = bSplineInterpolate(p0, p1, p2, p3, t)
+                interpolatedPoint.yaw = bSplineInterpolate(y0, y1, y2, y3, t)
                 calculated[startTick + j] = interpolatedPoint
             }
         }
