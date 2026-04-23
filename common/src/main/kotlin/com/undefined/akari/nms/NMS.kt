@@ -2,7 +2,11 @@ package com.undefined.akari.nms
 
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.block.data.BlockData
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.joml.Quaternionf
+import org.joml.Vector3f
 
 interface NMS {
     fun createItemDisplay(world: World): Any
@@ -22,4 +26,13 @@ interface NMS {
     fun setInterpolationDuration(entity: Any, interpolationDuration: Int, players: List<Player>)
 
     fun sendTeleportPacket(entity: Any, players: List<Player>)
+
+    fun createBlockDisplay(world: World): Any
+
+    fun setBlockDisplayBlock(entity: Any, blockData: BlockData)
+
+    fun setTransformation(entity: Any, translation: Vector3f, leftRotation: Quaternionf, scale: Vector3f, rightRotation: Quaternionf)
+
+    fun sendEntityData(display: Any, toList: List<Player>)
+    fun setItemDisplayItem(entity: Any, itemStack: ItemStack)
 }

@@ -5,10 +5,27 @@ package com.undefined.akari.player
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.camaraPath.CalculatedPath
 import com.undefined.akari.camaraPath.CameraPath
+import com.undefined.akari.entity.NMSCamera.createServerEntity
+import com.undefined.akari.entity.NMSCamera.spawnForClient
+import com.undefined.akari.manager.NMSManager
 import com.undefined.akari.util.LineUtil
+import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
+import org.joml.Quaternionf
+import org.joml.Vector2f
+import org.joml.Vector3f
+import java.net.URI
 import java.util.SortedMap
+import java.util.UUID
+import kotlin.collections.mutableSetOf
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 class CameraSequence(
     kotlinDSL: CameraSequence.() -> Unit = {}
@@ -63,7 +80,7 @@ class CameraSequence(
 
     fun firstLocation(world: World): Location = pathMap.firstEntry().value.calculatedPoints.values.first().toLocation(world)
 
-    fun spawnDisplayLine(world: World) {
+    fun spawnDisplayLine(players: MutableSet<Player>, world: World) {
         var past: Location? = null
         pathMap.forEach {
             val material = LineUtil.randomMaterial()
@@ -73,10 +90,46 @@ class CameraSequence(
                     continue
                 }
                 val newLoc = point.toLocation(world)
-                        LineUtil.createLine(past, newLoc, material)
+                LineUtil.createLine(players, past, newLoc, material)
                 past = newLoc
             }
         }
     }
 
+    fun spawnPathPointDisplay(players: MutableSet<Player>, world: World) {
+        pathMap.values.forEach { path ->
+            path.originalPoints.values.forEach { point ->
+                val yaw = Math.toRadians(-point.yaw.toDouble()).toFloat()
+                val pitch = Math.toRadians(-point.pitch.toDouble()).toFloat()
+
+                val rotation = Quaternionf()
+                    .rotateY(yaw)
+                    .rotateX(pitch)
+
+                val head = ItemStack(Material.PLAYER_HEAD)
+                val meta = head.itemMeta as SkullMeta
+                val profile = Bukkit.createPlayerProfile(UUID.randomUUID())
+                val textures = profile.textures
+                textures.skin = URI("https://textures.minecraft.net/texture/e38e38187e5e90ca8f07d6035b15d817c6fdfdb69816f17fe097b1c6b004e507").toURL()
+                profile.setTextures(textures)
+                meta.ownerProfile = profile
+                head.itemMeta = meta
+
+                val loc = point.toLocation(world).apply {
+                    this.yaw = 0f
+                    this.pitch = 0f
+                }
+
+                val itemDisplay = NMSManager.nms.createItemDisplay(world)
+                NMSManager.nms.setItemDisplayItem(itemDisplay, head)
+                NMSManager.nms.setEntityLocation(itemDisplay, loc)
+                NMSManager.nms.setTransformation(itemDisplay, Vector3f(), rotation, Vector3f(1f, 1f, 1f), Quaternionf())
+
+                val serverEntity = createServerEntity(itemDisplay, world)
+                players.forEach { player -> spawnForClient(itemDisplay, serverEntity, player) }
+
+                NMSManager.nms.sendEntityData(itemDisplay, players.toList())
+            }
+        }
+    }
 }

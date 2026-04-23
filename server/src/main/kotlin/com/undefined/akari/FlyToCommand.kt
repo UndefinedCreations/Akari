@@ -3,13 +3,13 @@ package com.undefined.akari
 import com.undefined.akari.algorithm.AlgorithmType
 import com.undefined.akari.camaraPath.CameraPath
 import com.undefined.akari.camaraPath.point.toCameraPoint
-import com.undefined.akari.camaraPath.presetPath.OrbitalPath
 import com.undefined.akari.player.CameraPlayer
 import com.undefined.akari.player.CameraSequence
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.util.Vector
 
 class FlyToCommand : CommandExecutor {
 
@@ -38,15 +38,19 @@ class FlyToCommand : CommandExecutor {
         val seq = CameraSequence {
             addCameraPath(
                 CameraPath {
-                    setAlgorithm(AlgorithmType.SMOOTHSTEP)
                     addCamaraPoint (
                         from.toCameraPoint()
                     )
-                    addCamaraPoint(to.toCameraPoint(), 60)
-                }.calculatePoints()
+                    addCamaraPoint(to.toCameraPoint(), 30)
+                    addCamaraPoint(to.toCameraPoint().addPosition(Vector(15, 15, 15)), 30)
+                    addCamaraPoint(to.toCameraPoint().addPosition(Vector(35, 15, 45)), 30)
+                }
+                    .setAlgorithm(AlgorithmType.BSPLINE)
+                    .calculatePoints()
             )
         }
-        seq.spawnDisplayLine(sender.world)
+        seq.spawnDisplayLine(mutableSetOf<Player>(sender), sender.world)
+        seq.spawnPathPointDisplay(mutableSetOf(sender), sender.world)
 
         CameraPlayer(sender.world) {
             setCameraSequence(seq).setBukkitCamera(false)

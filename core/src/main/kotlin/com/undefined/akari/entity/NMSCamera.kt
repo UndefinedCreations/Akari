@@ -1,9 +1,7 @@
 package com.undefined.akari.entity
 
-import com.undefined.akari.AkariConfig
 import com.undefined.akari.manager.NMSManager
 import com.undefined.akari.player.CameraEntity
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player

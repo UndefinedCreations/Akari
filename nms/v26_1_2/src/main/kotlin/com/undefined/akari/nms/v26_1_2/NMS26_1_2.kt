@@ -2,6 +2,7 @@
 
 package com.undefined.akari.nms.v26_1_2
 
+import com.mojang.math.Transformation
 import com.undefined.akari.nms.NMS
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
@@ -21,17 +22,46 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.PositionMoveRotation
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.block.data.BlockData
 import org.bukkit.craftbukkit.CraftWorld
+import org.bukkit.craftbukkit.block.data.CraftBlockData
 import org.bukkit.craftbukkit.entity.CraftPlayer
+import org.bukkit.craftbukkit.inventory.CraftItemStack
 import org.bukkit.entity.Player
+import org.joml.Quaternionf
+import org.joml.Vector3f
 import java.util.function.Consumer
 import java.util.function.Predicate
 import kotlin.collections.mutableSetOf
 
 object NMS_26_1_2 : NMS {
 
+    override fun setItemDisplayItem(entity: Any, itemStack: org.bukkit.inventory.ItemStack) {
+        val entity = entity as? Display.ItemDisplay ?: return
+        entity.itemStack = CraftItemStack.asNMSCopy(itemStack)
+    }
+
+    override fun sendEntityData(entity: Any, players: List<Player>) {
+        val entity = entity as? Display ?: return
+        val data = entity.entityData.nonDefaultValues ?: return
+        players.sendPackets(ClientboundSetEntityDataPacket(entity.id, data))
+    }
+
+    override fun setTransformation(entity: Any, translation: Vector3f, leftRotation: Quaternionf, scale: Vector3f, rightRotation: Quaternionf) {
+        val entity = entity as? Display ?: return
+        entity.setTransformation(Transformation(translation, leftRotation, scale, rightRotation))
+    }
+
     override fun createItemDisplay(world: World): Any =
         Display.ItemDisplay(EntityType.ITEM_DISPLAY, (world as CraftWorld).handle)
+
+    override fun createBlockDisplay(world: World): Any =
+        Display.BlockDisplay(EntityType.BLOCK_DISPLAY, (world as CraftWorld).handle)
+
+    override fun setBlockDisplayBlock(entity: Any, blockData: BlockData) {
+        val entity = entity as? Display.BlockDisplay ?: return
+        entity.blockState = (blockData as CraftBlockData).state
+    }
 
     override fun setEntityLocation(entity: Any, location: Location) {
         val entity = entity as? Display.ItemDisplay ?: return
